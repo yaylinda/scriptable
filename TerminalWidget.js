@@ -24,11 +24,11 @@ const COLORS = {
 };
 
 // TODO: PLEASE SET THESE VALUES
-const WEATHER_API_KEY = "36881329dd0afa7e532f18d806ee316d";
-const WORK_CALENDAR_NAME = 'linda.zheng@redfin.com';
-const PERSONAL_CALENDAR_NAME = 'lindazheng1993@gmail.com';
-const PERIOD_CALENDAR_NAME = 'Period';
-const PERIOD_EVENT_NAME = 'On Period :(';
+const WEATHER_API_KEY = "TODO";
+const WORK_CALENDAR_NAME = 'TODO';
+const PERSONAL_CALENDAR_NAME = 'TODO';
+const PERIOD_CALENDAR_NAME = 'TODO';
+const PERIOD_EVENT_NAME = 'TODO';
 
 /******************************************************************************
  * Initial Setups
