@@ -24,7 +24,8 @@ const COLORS = {
 };
 
 // TODO: PLEASE SET THESE VALUES
-const WEATHER_API_KEY = "TODO";
+const NAME = 'TODO';
+const WEATHER_API_KEY = 'TODO';
 const WORK_CALENDAR_NAME = 'TODO';
 const PERSONAL_CALENDAR_NAME = 'TODO';
 const PERIOD_CALENDAR_NAME = 'TODO';
@@ -47,7 +48,7 @@ Date.prototype.addDays = function(days) {
 
 // Import and setup Cache
 const Cache = importModule('Cache');
-const cache = new Cache("terminalWidget");
+const cache = new Cache('terminalWidget');
 
 // Fetch data and create widget
 const data = await fetchData();
@@ -92,7 +93,7 @@ function createWidget(data) {
   lastLoginLine.font = new Font(FONT_NAME, FONT_SIZE);
 
   // Line 1 - Input
-  const inputLine = stack.addText(`iPhone:~ linda$ info`);
+  const inputLine = stack.addText(`iPhone:~ ${NAME}$ info`);
   inputLine.textColor = Color.white();
   inputLine.font = new Font(FONT_NAME, FONT_SIZE);
 
