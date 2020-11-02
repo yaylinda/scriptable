@@ -59,32 +59,32 @@ function createWidget(data) {
 
   // Line 2 - Next Personal Calendar Event
   const nextPersonalCalendarEventLine = stack.addText(`🗓 | ${getCalendarEventTitle(data.nextPersonalEvent, false)}`);
-  nextPersonalCalendarEventLine.textColor = new Color("#9EC1CF");
+  nextPersonalCalendarEventLine.textColor = new Color("#5BD2F0");
   nextPersonalCalendarEventLine.font = new Font("Menlo", 10);
 
   // Line 3 - Next Work Calendar Event
   const nextWorkCalendarEventLine = stack.addText(`🗓 | ${getCalendarEventTitle(data.nextWorkEvent, true)}`);
-  nextWorkCalendarEventLine.textColor = new Color("#9EE09E");
+  nextWorkCalendarEventLine.textColor = new Color("#7AE7B9");
   nextWorkCalendarEventLine.font = new Font("Menlo", 10);
 
   // Line 4 - Weather
-  const weatherLine = stack.addText(`${data.weather.icon} | ${data.weather.temperature}° (${data.weather.high}°-${data.weather.low}°)`);
+  const weatherLine = stack.addText(`${data.weather.icon} | ${data.weather.description}, ${data.weather.temperature}° (${data.weather.high}°-${data.weather.low}°)`);
   weatherLine.textColor = new Color("#FDFD97");
   weatherLine.font = new Font("Menlo", 10);
   
   // Line 5 - TODO (?)
-  const line4 = stack.addText(`🗓 | TODO`);
+  const line4 = stack.addText(`📍 | ${data.weather.location}`);
   line4.textColor = new Color("#FEB144");
   line4.font = new Font("Menlo", 10);
 
-  // Line 6 - TODO (period?)
+  // Line 6 - Period
   const line5 = stack.addText(`🩸 | ${data.period}`);
   line5.textColor = new Color("#FF6663");
   line5.font = new Font("Menlo", 10);
 
-  // Line 7 - TODO (stats?)
-  const line6 = stack.addText(`🗓 | TODO`);
-  line6.textColor = new Color("#CC99C9");
+  // Line 7 - Battery
+  const line6 = stack.addText(`🔋 | ${Math.round(data.batteryLevel * 100)}%`);
+  line6.textColor = new Color("#9D90FF");
   line6.font = new Font("Menlo", 10);
 
   return w;
@@ -145,6 +145,7 @@ async function fetchWeather() {
   const isNight = currentTime >= data.current.sunset || currentTime <= data.current.sunrise
 
   return {
+    location: `${address[0].city}, ${address[0].state}`,
     icon: getWeatherEmoji(data.current.weather[0].id, isNight),
     description: data.current.weather[0].main,
     temperature: Math.round(data.current.temp),
@@ -245,7 +246,7 @@ function getWeatherEmoji(code, isNight) {
  */
 function getCalendarEventTitle(calendarEvent, isWorkEvent) {
   if (!calendarEvent) {
-    return `No more ${isWorkEvent ? 'work ' : ''}events today :)`;
+    return `No more ${isWorkEvent ? 'work ' : ''}events`;
   }
 
   const timeFormatter = new DateFormatter();
@@ -288,10 +289,10 @@ async function fetchPeriodData() {
     const current = new Date().getTime();
     if (new Date(periodEvent.startDate).getTime() <= current && new Date(periodEvent.endDate).getTime() >= current) {
       const timeUntilPeriodEndMs = new Date(periodEvent.endDate).getTime() - current;
-      return `${(timeUntilPeriodEndMs / 86400000).toFixed(0)} days until period ends`; ;
+      return `${Math.round(timeUntilPeriodEndMs / 86400000)} days until period ends`; ;
     } else {
       const timeUntilPeriodStartMs = new Date(periodEvent.startDate).getTime() - current;
-      return `${(timeUntilPeriodStartMs / 86400000).toFixed(0)} days until period starts`; 
+      return `${Math.round(timeUntilPeriodStartMs / 86400000)} days until period starts`; 
     }
   } else {
     return 'Unknown period data';
