@@ -22,21 +22,21 @@ Script.setWidget(widget);
 Script.complete();
 
 /**
- * Main render widget function.
+ * Main widget function.
  * 
  * @param {} data The data for the widget to display
  */
 function createWidget(data) {
   console.log(`Creating widget with data: ${JSON.stringify(data)}`);
 
-  const w = new ListWidget();
+  const widget = new ListWidget();
   const bgColor = new LinearGradient();
   bgColor.colors = [new Color("#29323c"), new Color("#1c1c1c")];
   bgColor.locations = [0.0, 1.0];
-  w.backgroundGradient = bgColor;
-  w.setPadding(10, 15, 15, 10);
+  widget.backgroundGradient = bgColor;
+  widget.setPadding(10, 15, 15, 10);
 
-  const stack = w.addStack();
+  const stack = widget.addStack();
   stack.layoutVertically();
   stack.spacing = 4;
   stack.size = new Size(320, 0);
@@ -64,30 +64,30 @@ function createWidget(data) {
 
   // Line 3 - Next Work Calendar Event
   const nextWorkCalendarEventLine = stack.addText(`🗓 | ${getCalendarEventTitle(data.nextWorkEvent, true)}`);
-  nextWorkCalendarEventLine.textColor = new Color("#7AE7B9");
+  nextWorkCalendarEventLine.textColor = new Color("#9D90FF");
   nextWorkCalendarEventLine.font = new Font("Menlo", 10);
 
   // Line 4 - Weather
-  const weatherLine = stack.addText(`${data.weather.icon} | ${data.weather.description}, ${data.weather.temperature}° (${data.weather.high}°-${data.weather.low}°)`);
+  const weatherLine = stack.addText(`${data.weather.icon} | ${data.weather.temperature}° (${data.weather.high}°-${data.weather.low}°), ${data.weather.description}, feels like ${data.weather.feelsLike}°`);
   weatherLine.textColor = new Color("#FDFD97");
   weatherLine.font = new Font("Menlo", 10);
   
-  // Line 5 - TODO (?)
-  const line4 = stack.addText(`📍 | ${data.weather.location}`);
-  line4.textColor = new Color("#FEB144");
-  line4.font = new Font("Menlo", 10);
+  // Line 5 - Location
+  const locationLine = stack.addText(`📍 | ${data.weather.location}`);
+  locationLine.textColor = new Color("#FEB144");
+  locationLine.font = new Font("Menlo", 10);
 
   // Line 6 - Period
-  const line5 = stack.addText(`🩸 | ${data.period}`);
-  line5.textColor = new Color("#FF6663");
-  line5.font = new Font("Menlo", 10);
+  const periodLine = stack.addText(`🩸 | ${data.period}`);
+  periodLine.textColor = new Color("#FF6663");
+  periodLine.font = new Font("Menlo", 10);
 
-  // Line 7 - Battery
-  const line6 = stack.addText(`🔋 | ${Math.round(data.batteryLevel * 100)}%`);
-  line6.textColor = new Color("#9D90FF");
-  line6.font = new Font("Menlo", 10);
+  // Line 7 - Various Device Stats
+  const deviceStatsLine = stack.addText(`📊 | ⚡︎ ${data.device.battery}%, ☀ ${data.device.brightness}`);
+  deviceStatsLine.textColor = new Color("#7AE7B9");
+  deviceStatsLine.font = new Font("Menlo", 10);
 
-  return w;
+  return widget;
 }
 
 /**
@@ -101,11 +101,11 @@ async function fetchData() {
   const nextWorkEvent = await fetchNextCalendarEvent('linda.zheng@redfin.com');
   const nextPersonalEvent = await fetchNextCalendarEvent('lindazheng1993@gmail.com');
 
-  // Get battery data
-  const batteryLevel = Device.batteryLevel();
-
   // Get period data
   const period = await fetchPeriodData();
+
+  // Get device data
+  const device = getDeviceData();
 
   // Get last data update time (and set)
   const lastUpdated = await getLastUpdated();
@@ -113,11 +113,11 @@ async function fetchData() {
 
   return {
     weather,
-    lastUpdated,
     nextWorkEvent,
-    batteryLevel, 
     nextPersonalEvent,
     period,
+    device,
+    lastUpdated,
   };
 }
 
@@ -145,13 +145,14 @@ async function fetchWeather() {
   const isNight = currentTime >= data.current.sunset || currentTime <= data.current.sunrise
 
   return {
-    location: `${address[0].city}, ${address[0].state}`,
+    location: `${address[0].postalAddress.city}, ${address[0].postalAddress.state}`,
     icon: getWeatherEmoji(data.current.weather[0].id, isNight),
     description: data.current.weather[0].main,
     temperature: Math.round(data.current.temp),
     wind: Math.round(data.current.wind_speed),
     high: Math.round(data.daily[0].temp.max),
     low: Math.round(data.daily[0].temp.min),
+    feelsLike: Math.round(data.current.feels_like),
   }
 }
 
@@ -163,7 +164,7 @@ async function fetchNextCalendarEvent(calendarName) {
   const calendar = await Calendar.forEventsByTitle(calendarName);
   const events = await CalendarEvent.today([calendar]);
 
-  console.log(`Events for ${calendarName}: ${JSON.stringify(events)}`);
+  console.log(`Got ${events.length} events for ${calendarName}`);
 
   const upcomingEvents = events.filter(e => (new Date(e.endDate)).getTime() >= (new Date()).getTime());
 
@@ -246,7 +247,7 @@ function getWeatherEmoji(code, isNight) {
  */
 function getCalendarEventTitle(calendarEvent, isWorkEvent) {
   if (!calendarEvent) {
-    return `No more ${isWorkEvent ? 'work ' : ''}events`;
+    return `No upcoming ${isWorkEvent ? 'work ' : ''}events`;
   }
 
   const timeFormatter = new DateFormatter();
@@ -280,10 +281,9 @@ async function fetchPeriodData() {
   const periodCalendar = await Calendar.forEventsByTitle("Period");
   const events = await CalendarEvent.between(new Date(), new Date().addDays(30), [periodCalendar]);
 
-  console.log(`Period Events: ${JSON.stringify(events)}`);
+  console.log(`Got ${events.length} period events`);
 
   const periodEvent = events.filter(e => e.title === 'On Period :(')[0];
-  console.log(`Period Event: ${JSON.stringify(periodEvent)}`);
 
   if (periodEvent) {
     const current = new Date().getTime();
@@ -297,4 +297,12 @@ async function fetchPeriodData() {
   } else {
     return 'Unknown period data';
   }
+}
+
+function getDeviceData() {
+  return {
+    battery: Math.round(Device.batteryLevel() * 100),
+    brightness: Math.round(Device.screenBrightness() * 100),
+    // volume: Math.round(Device.volume() * 100),
+  };
 }
