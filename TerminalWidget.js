@@ -7,6 +7,12 @@ const DEFAULT_LOCATION = {
   longitude: 0
 };
 
+Date.prototype.addDays = function(days) {
+  var date = new Date(this.valueOf());
+  date.setDate(date.getDate() + days);
+  return date;
+};
+
 const Cache = importModule('Cache');
 const cache = new Cache("terminalWidget");
 
@@ -23,79 +29,63 @@ Script.complete();
 function createWidget(data) {
   console.log(`Creating widget with data: ${JSON.stringify(data)}`);
 
-  const w = new ListWidget()
-  const bgColor = new LinearGradient()
-  bgColor.colors = [new Color("#29323c"), new Color("#1c1c1c")]
-  bgColor.locations = [0.0, 1.0]
-  w.backgroundGradient = bgColor
-  w.setPadding(12, 15, 15, 12)
+  const w = new ListWidget();
+  const bgColor = new LinearGradient();
+  bgColor.colors = [new Color("#29323c"), new Color("#1c1c1c")];
+  bgColor.locations = [0.0, 1.0];
+  w.backgroundGradient = bgColor;
+  w.setPadding(10, 15, 15, 10);
 
   const stack = w.addStack();
-  stack.layoutHorizontally();
-
-  // ----------------------------------
-  // Left Stack (Main Info)
-  // ----------------------------------
-  const leftStack = stack.addStack();
-  leftStack.layoutVertically();
-  leftStack.spacing = 6;
-  leftStack.size = new Size(200, 0);
+  stack.layoutVertically();
+  stack.spacing = 4;
+  stack.size = new Size(320, 0);
 
   // Line 0 - Last Login
-  const timeDiffMs = ((new Date().getTime() - data.lastUpdated) / 1000).toFixed(0);
-  const lastLoginLine = leftStack.addText(`Last login: ${timeDiffMs} sec ago`);
+  const timeFormatter = new DateFormatter();
+  timeFormatter.locale = "en";
+  timeFormatter.useNoDateStyle();
+  timeFormatter.useShortTimeStyle();
+
+  const lastLoginLine = stack.addText(`Last login: ${timeFormatter.string(new Date())} on ttys001`);
   lastLoginLine.textColor = Color.white();
   lastLoginLine.textOpacity = 0.7;
-  lastLoginLine.font = new Font("Menlo", 11);
+  lastLoginLine.font = new Font("Menlo", 10);
 
   // Line 1 - Input
-  const inputLine = leftStack.addText(`iPhone:~ linda$ info`);
+  const inputLine = stack.addText(`iPhone:~ linda$ info`);
   inputLine.textColor = Color.white();
-  inputLine.textOpacity = 0.7;
-  inputLine.font = new Font("Menlo", 11);
+  inputLine.font = new Font("Menlo", 10);
 
-  // Line 2 - Next Work Calendar Event
-  const nextWorkEventTitle = data.nextWorkEvent ? data.nextWorkEvent.title : 'No upcoming work events';
-  const nextWorkCalendarEventLine = leftStack.addText(`[🗓] ${nextWorkEventTitle}`);
-  nextWorkCalendarEventLine.textColor = new Color("#FF6663");
-  nextWorkCalendarEventLine.font = new Font("Menlo", 11);
+  // Line 2 - Next Personal Calendar Event
+  const nextPersonalCalendarEventLine = stack.addText(`🗓 | ${getCalendarEventTitle(data.nextPersonalEvent, false)}`);
+  nextPersonalCalendarEventLine.textColor = new Color("#9EC1CF");
+  nextPersonalCalendarEventLine.font = new Font("Menlo", 10);
+
+  // Line 3 - Next Work Calendar Event
+  const nextWorkCalendarEventLine = stack.addText(`🗓 | ${getCalendarEventTitle(data.nextWorkEvent, true)}`);
+  nextWorkCalendarEventLine.textColor = new Color("#9EE09E");
+  nextWorkCalendarEventLine.font = new Font("Menlo", 10);
+
+  // Line 4 - Weather
+  const weatherLine = stack.addText(`${data.weather.icon} | ${data.weather.temperature}° (${data.weather.high}°-${data.weather.low}°)`);
+  weatherLine.textColor = new Color("#FDFD97");
+  weatherLine.font = new Font("Menlo", 10);
   
-  // Line 3 - Next Personal Calendar Event
-  const nextPersonalEventTitle = data.nextPersonalEvent ? data.nextPersonalEvent.title : 'No upcoming events';
-  const nextPersonalCalendarEventLine = leftStack.addText(`[🗓] ${nextPersonalEventTitle}`);
-  nextPersonalCalendarEventLine.textColor = new Color("#FDFD97");
-  nextPersonalCalendarEventLine.font = new Font("Menlo", 11);
+  // Line 5 - TODO (?)
+  const line4 = stack.addText(`🗓 | TODO`);
+  line4.textColor = new Color("#FEB144");
+  line4.font = new Font("Menlo", 10);
 
-  // Line 4 - TODO
-  const line4 = leftStack.addText(`[🗓] TODO`);
-  line4.textColor = new Color("#9EE09E");
-  line4.font = new Font("Menlo", 11);
+  // Line 6 - TODO (period?)
+  const line5 = stack.addText(`🩸 | ${data.period}`);
+  line5.textColor = new Color("#FF6663");
+  line5.font = new Font("Menlo", 10);
 
-  // Line 5 - TODO
-  const line5 = leftStack.addText(`[🗓] TODO`);
-  line5.textColor = new Color("#9EC1CF");
-  line5.font = new Font("Menlo", 11);
-
-  // Line 6 - TODO
-  const line6 = leftStack.addText(`[🗓] TODO`);
+  // Line 7 - TODO (stats?)
+  const line6 = stack.addText(`🗓 | TODO`);
   line6.textColor = new Color("#CC99C9");
-  line6.font = new Font("Menlo", 11);
-
-  // ----------------------------------
-  // Right Stack (Weather)
-  // ----------------------------------
-  stack.addSpacer();
-  const rightStack = stack.addStack();
-  rightStack.spacing = 2;
-  rightStack.layoutVertically();
-  rightStack.bottomAlignContent();
-
-  addWeatherLine(rightStack, data.weather.icon, 32);
-  addWeatherLine(rightStack, `${data.weather.description}, ${data.weather.temperature}°`, 12, true);
-  addWeatherLine(rightStack, `High: ${data.weather.high}°`);
-  addWeatherLine(rightStack, `Low: ${data.weather.low}°`);
-  addWeatherLine(rightStack, `UVI: ${data.weather.uvi}`);
-  addWeatherLine(rightStack, `Wind: ${data.weather.wind} mph`);
+  line6.font = new Font("Menlo", 10);
 
   return w;
 }
@@ -114,6 +104,9 @@ async function fetchData() {
   // Get battery data
   const batteryLevel = Device.batteryLevel();
 
+  // Get period data
+  const period = await fetchPeriodData();
+
   // Get last data update time (and set)
   const lastUpdated = await getLastUpdated();
   cache.write(CACHE_KEY_LAST_UPDATED, new Date().getTime());
@@ -124,19 +117,13 @@ async function fetchData() {
     nextWorkEvent,
     batteryLevel, 
     nextPersonalEvent,
+    period,
   };
 }
 
-function addWeatherLine(w, text, size, bold) {
-  const stack = w.addStack();
-  stack.setPadding(0, 0, 0, 0);
-  stack.layoutHorizontally();
-  stack.addSpacer();
-  const line = stack.addText(text);
-  line.textColor = new Color("#FEB144");
-  line.font = new Font("Menlo" + (bold ? "-Bold" : ""), size || 11);
-}
-
+/**
+ * 
+ */
 async function fetchWeather() {
   let location = await cache.read('location');
   if (!location) {
@@ -164,17 +151,30 @@ async function fetchWeather() {
     wind: Math.round(data.current.wind_speed),
     high: Math.round(data.daily[0].temp.max),
     low: Math.round(data.daily[0].temp.min),
-    uvi: data.current.uvi.toFixed(1),
   }
 }
 
+/**
+ * 
+ * @param {*} calendarName 
+ */
 async function fetchNextCalendarEvent(calendarName) {
   const calendar = await Calendar.forEventsByTitle(calendarName);
   const events = await CalendarEvent.today([calendar]);
-  console.log(`Got ${events.length} events for ${calendarName} for today`);
-  return events[0] || null;
+
+  console.log(`Events for ${calendarName}: ${JSON.stringify(events)}`);
+
+  const upcomingEvents = events.filter(e => (new Date(e.endDate)).getTime() >= (new Date()).getTime());
+
+  return upcomingEvents ? upcomingEvents[0] : null;
 }
 
+/**
+ * 
+ * @param {*} key 
+ * @param {*} url 
+ * @param {*} headers 
+ */
 async function fetchJson(key, url, headers) {
   const cached = await cache.read(key, 5);
   if (cached) {
@@ -197,6 +197,11 @@ async function fetchJson(key, url, headers) {
   }
 }
 
+/**
+ * 
+ * @param {*} code 
+ * @param {*} isNight 
+ */
 function getWeatherEmoji(code, isNight) {
   if (code >= 200 && code < 300 || code == 960 || code == 961) {
     return "⛈"
@@ -235,6 +240,26 @@ function getWeatherEmoji(code, isNight) {
 
 /**
  * 
+ * @param {*} calendarEvent 
+ * @param {*} isWorkEvent 
+ */
+function getCalendarEventTitle(calendarEvent, isWorkEvent) {
+  if (!calendarEvent) {
+    return `No more ${isWorkEvent ? 'work ' : ''}events today :)`;
+  }
+
+  const timeFormatter = new DateFormatter();
+  timeFormatter.locale = 'en';
+  timeFormatter.useNoDateStyle();
+  timeFormatter.useShortTimeStyle();
+
+  const eventTime = new Date(calendarEvent.startDate);
+
+  return `[${timeFormatter.string(eventTime)}] ${calendarEvent.title}`;
+}
+
+/**
+ * 
  */
 async function getLastUpdated() {
   let cachedLastUpdated = await cache.read(CACHE_KEY_LAST_UPDATED);
@@ -245,4 +270,30 @@ async function getLastUpdated() {
   }
 
   return cachedLastUpdated;
+}
+
+/**
+ * 
+ */
+async function fetchPeriodData() {
+  const periodCalendar = await Calendar.forEventsByTitle("Period");
+  const events = await CalendarEvent.between(new Date(), new Date().addDays(30), [periodCalendar]);
+
+  console.log(`Period Events: ${JSON.stringify(events)}`);
+
+  const periodEvent = events.filter(e => e.title === 'On Period :(')[0];
+  console.log(`Period Event: ${JSON.stringify(periodEvent)}`);
+
+  if (periodEvent) {
+    const current = new Date().getTime();
+    if (new Date(periodEvent.startDate).getTime() <= current && new Date(periodEvent.endDate).getTime() >= current) {
+      const timeUntilPeriodEndMs = new Date(periodEvent.endDate).getTime() - current;
+      return `${(timeUntilPeriodEndMs / 86400000).toFixed(0)} days until period ends`; ;
+    } else {
+      const timeUntilPeriodStartMs = new Date(periodEvent.startDate).getTime() - current;
+      return `${(timeUntilPeriodStartMs / 86400000).toFixed(0)} days until period starts`; 
+    }
+  } else {
+    return 'Unknown period data';
+  }
 }
