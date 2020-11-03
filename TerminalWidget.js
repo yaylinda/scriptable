@@ -258,10 +258,12 @@ function getWeatherEmoji(code, isNight) {
 async function fetchNextCalendarEvent(calendarName) {
   const calendar = await Calendar.forEventsByTitle(calendarName);
   const events = await CalendarEvent.today([calendar]);
+  const tomorrow = await CalendarEvent.tomorrow([calendar]);
 
   console.log(`Got ${events.length} events for ${calendarName}`);
+  console.log(`Got ${tomorrow.length} events for ${calendarName} tomorrow`);
 
-  const upcomingEvents = events.filter(e => (new Date(e.endDate)).getTime() >= (new Date()).getTime());
+  const upcomingEvents = events.concat(tomorrow).filter(e => (new Date(e.endDate)).getTime() >= (new Date()).getTime());
 
   return upcomingEvents ? upcomingEvents[0] : null;
 }
