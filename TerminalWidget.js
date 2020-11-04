@@ -24,12 +24,12 @@ const COLORS = {
 };
 
 // TODO: PLEASE SET THESE VALUES
-const NAME = 'TODO';
-const WEATHER_API_KEY = 'TODO';
-const WORK_CALENDAR_NAME = 'TODO';
-const PERSONAL_CALENDAR_NAME = 'TODO';
-const PERIOD_CALENDAR_NAME = 'TODO';
-const PERIOD_EVENT_NAME = 'TODO';
+// const NAME = 'TODO';
+// const WEATHER_API_KEY = 'TODO';
+// const WORK_CALENDAR_NAME = 'TODO';
+// const PERSONAL_CALENDAR_NAME = 'TODO';
+// const PERIOD_CALENDAR_NAME = 'TODO';
+// const PERIOD_EVENT_NAME = 'TODO';
 
 /******************************************************************************
  * Initial Setups
@@ -187,13 +187,28 @@ async function fetchWeather() {
   }
   const url = "https://api.openweathermap.org/data/2.5/onecall?lat=" + location.latitude + "&lon=" + location.longitude + "&exclude=minutely,hourly,alerts&units=imperial&lang=en&appid=" + WEATHER_API_KEY;
   const address = await Location.reverseGeocode(location.latitude, location.longitude);
-  const data = await fetchJson(`weather_${address[0].locality}`, url);
+  const data = await fetchJson(url);
+
+  const cityState = `${address[0].postalAddress.city}, ${address[0].postalAddress.state}`;
+
+  if (!data) {
+    return {
+      location: cityState,
+      icon: '❓',
+      description: 'Unknown',
+      temperature: '?',
+      wind: '?',
+      high: '?',
+      low: '?',
+      feelsLike: '?',
+    }
+  }
 
   const currentTime = new Date().getTime() / 1000;
   const isNight = currentTime >= data.current.sunset || currentTime <= data.current.sunrise
 
   return {
-    location: `${address[0].postalAddress.city}, ${address[0].postalAddress.state}`,
+    location: cityState,
     icon: getWeatherEmoji(data.current.weather[0].id, isNight),
     description: data.current.weather[0].main,
     temperature: Math.round(data.current.temp),
@@ -251,7 +266,7 @@ function getWeatherEmoji(code, isNight) {
 //-------------------------------------
 
 /**
- * Fetch the next calendar event from the given calendar
+ * Fetch the next "accepted" calendar event from the given calendar
  * 
  * @param {*} calendarName The calendar to get events from
  */
@@ -263,7 +278,10 @@ async function fetchNextCalendarEvent(calendarName) {
   console.log(`Got ${events.length} events for ${calendarName}`);
   console.log(`Got ${tomorrow.length} events for ${calendarName} tomorrow`);
 
-  const upcomingEvents = events.concat(tomorrow).filter(e => (new Date(e.endDate)).getTime() >= (new Date()).getTime());
+  const upcomingEvents = events
+    .concat(tomorrow)
+    .filter(e => (new Date(e.endDate)).getTime() >= (new Date()).getTime())
+    .filter(e => e.attendees.some(a => a.isCurrentUser && a.status === 'accepted'));
 
   return upcomingEvents ? upcomingEvents[0] : null;
 }
@@ -321,29 +339,18 @@ async function fetchPeriodData() {
 /**
  * Make a REST request and return the response
  * 
- * @param {*} key Cache key
  * @param {*} url URL to make the request to
  * @param {*} headers Headers for the request
  */
-async function fetchJson(key, url, headers) {
-  const cached = await cache.read(key, 5);
-  if (cached) {
-    return cached;
-  }
-
+async function fetchJson(url, headers) {
   try {
     console.log(`Fetching url: ${url}`);
     const req = new Request(url);
     req.headers = headers;
     const resp = await req.loadJSON();
-    cache.write(key, resp);
     return resp;
   } catch (error) {
-    try {
-      return cache.read(key, 5);
-    } catch (error) {
-      console.log(`Couldn't fetch ${url}`);
-    }
+    console.error(`Error fetching from url: ${url}, error: ${JSON.stringify(error)}`);
   }
 }
 
