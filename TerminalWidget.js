@@ -24,12 +24,12 @@ const COLORS = {
 };
 
 // TODO: PLEASE SET THESE VALUES
-// const NAME = 'TODO';
-// const WEATHER_API_KEY = 'TODO';
-// const WORK_CALENDAR_NAME = 'TODO';
-// const PERSONAL_CALENDAR_NAME = 'TODO';
-// const PERIOD_CALENDAR_NAME = 'TODO';
-// const PERIOD_EVENT_NAME = 'TODO';
+const NAME = 'TODO';
+const WEATHER_API_KEY = 'TODO';
+const WORK_CALENDAR_NAME = 'TODO';
+const PERSONAL_CALENDAR_NAME = 'TODO';
+const PERIOD_CALENDAR_NAME = 'TODO';
+const PERIOD_EVENT_NAME = 'TODO';
 
 /******************************************************************************
  * Initial Setups
