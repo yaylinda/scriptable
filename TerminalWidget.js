@@ -2,7 +2,10 @@
  * Constants and Configurations
  *****************************************************************************/
 
- // Cache keys and default location
+// NOTE: This script uses the Cache script!
+// Make sure to add the Cache script in Scriptable as well!
+
+// Cache keys and default location
 const CACHE_KEY_LAST_UPDATED = 'last_updated';
 const CACHE_KEY_LOCATION = 'location';
 const DEFAULT_LOCATION = { latitude: 0, longitude: 0 };
