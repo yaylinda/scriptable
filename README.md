@@ -15,9 +15,12 @@ Currently, this widget shows information about:
 ![TerminalWidget](/images/TerminalWidget.png)
 
 ## DailyLogWidget
-Customizable list of things and colors. Creates a new "log" for each day at 5 AM (time is also customizable for when you want a new day to start). 
+Customizable list of things and colors. Creates a new "log" for each day at 5 AM (time is also customizable for when you want the new day to start). 
 
 ![DailyLogWidget](/images/DailyLogWidget.png)
 
+### [Upcoming] DailyLogAggregatorWidget
+Aggregates your data from `DailyLogWidget` and presents the data in a series of charts.
+
 ## Cache
-Copied from [evandcoleman](https://github.com/evandcoleman/scriptable/blob/main/scripts/cache.js). This is used to cache values for the TerminalWidget (and others).
+Copied from [evandcoleman](https://github.com/evandcoleman/scriptable/blob/main/scripts/cache.js). This is used to cache values for the TerminalWidget, DailyLogWidget.
