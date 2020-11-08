@@ -15,7 +15,7 @@ Currently, this widget shows information about:
 ![TerminalWidget](/images/TerminalWidget.png)
 
 ## DailyLogWidget
-Customizable list of things and colors. Creates a new "log" for each day at 5 AM (time is also customizable for when you want the new day to start). 
+Customizable list of things and colors. Creates a new "log" for each day at 5 AM (time is also customizable for when you want the new day to start). Click on the Widget to bring up a dialog to update things you've completed for the day. 
 
 ![DailyLogWidget](/images/DailyLogWidget.png)
 
