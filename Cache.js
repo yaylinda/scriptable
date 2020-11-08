@@ -1,3 +1,5 @@
+// NOTE: This script was written by evandcoleman: https://github.com/evandcoleman/scriptable
+
 class Cache {
   constructor(name) {
     this.fm = FileManager.iCloud();

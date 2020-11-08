@@ -1,5 +1,5 @@
 
-// NOTE: This script uses the Cache script!
+// NOTE: This script uses the Cache script (https://github.com/yaylinda/scriptable/blob/main/Cache.js)
 // Make sure to add the Cache script in Scriptable as well!
 
 /*-----------------
