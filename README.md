@@ -15,7 +15,7 @@ Currently, this widget shows information about:
 ![TerminalWidget](/images/TerminalWidget.png)
 
 ## DailyLogWidget
-Customizable list of things to check off! 
+Customizable list of things and colors. Creates a new "log" for each day at 5 AM (time is also customizable for when you want a new day to start). 
 
 ![DailyLogWidget](/images/DailyLogWidget.png)
 
