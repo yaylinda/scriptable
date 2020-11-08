@@ -14,5 +14,10 @@ Currently, this widget shows information about:
 
 ![TerminalWidget](/images/TerminalWidget.png)
 
+## DailyLogWidget
+Customizable list of things to check off! 
+
+![DailyLogWidget](/images/DailyLogWidget.png)
+
 ## Cache
 Copied from [evandcoleman](https://github.com/evandcoleman/scriptable/blob/main/scripts/cache.js). This is used to cache values for the TerminalWidget (and others).
