@@ -52,6 +52,9 @@ const DATE_TEXT_FORMAT = new Intl.DateTimeFormat('en-US', {
   day: 'numeric',
 });
 
+// What time should we start a daily log for the new day? (24hr format)
+const NEW_DAY_START = 5;
+
 /**************************************
  * Initial Setups
  *************************************/
@@ -213,7 +216,7 @@ async function fetchData() {
 
   // Determine day
   let date = new Date();
-  if (date.getHours() < 5) {
+  if (date.getHours() < NEW_DAY_START) {
     date = date.addDays(-1);
   }
 
