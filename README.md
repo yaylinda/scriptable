@@ -21,8 +21,8 @@ Click on the Widget to bring up a dialog to update things you've completed for t
 
 ![DailyLogWidget](/images/DailyLogWidgetPreview.gif)
 
-### DailyLogAggregatorWidget
-Aggregates a subset of the fields in from `DailyLogWidget` and presents the data in charts / stats.
+## DailyLogAggregatorWidget
+Aggregates the data collected from `DailyLogWidget` and presents a subset of the aggregated data in a widget.
 
 ![DailyLogAggregators](/images/DailyLogAggregator.jpeg)
 
