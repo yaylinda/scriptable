@@ -284,7 +284,7 @@ async function fetchNextCalendarEvent(calendarName) {
   const upcomingEvents = events
     .concat(tomorrow)
     .filter(e => (new Date(e.endDate)).getTime() >= (new Date()).getTime())
-    .filter(e => e.attendees.some(a => a.isCurrentUser && a.status === 'accepted'));
+    .filter(e => e.attendees && e.attendees.some(a => a.isCurrentUser && a.status === 'accepted'));
 
   return upcomingEvents ? upcomingEvents[0] : null;
 }
