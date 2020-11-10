@@ -21,8 +21,10 @@ Click on the Widget to bring up a dialog to update things you've completed for t
 
 ![DailyLogWidget](/images/DailyLogWidgetPreview.gif)
 
-### [Upcoming] DailyLogAggregatorWidget
-Aggregates your data from `DailyLogWidget` and presents the data in charts / stats.
+### DailyLogAggregatorWidget
+Aggregates a subset of the fields in from `DailyLogWidget` and presents the data in charts / stats.
+
+![DailyLogAggregator.png](/images/DailyLogAggregator.png)
 
 ## Cache
 Copied from [evandcoleman](https://github.com/evandcoleman/scriptable/blob/main/scripts/cache.js). This is used to cache values for the TerminalWidget, DailyLogWidget.
