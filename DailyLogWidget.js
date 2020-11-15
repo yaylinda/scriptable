@@ -35,6 +35,9 @@ const FIELDS = [
   { label: 'Sad', category: 'SAMPLE_CAT_3' },
 ];
 
+// Number of columns to display the fields in
+const NUM_COLUMNS = 4;
+
 // Text size for field data information
 const TEXT_SIZE = 6;
 
@@ -196,15 +199,12 @@ function createWidget(data) {
   const bottomStack = stack.addStack();
   bottomStack.layoutHorizontally();
 
-  // Split fields array to get fields list for each column
-  const sliceIndex = Math.round(data.fields.length / 2);
-  const leftFields = data.fields.slice(0, sliceIndex);
-  const rightFields = data.fields.slice(sliceIndex);
-
-  // Format the fields data (indicator and label) in two columns
-  formatColumn(bottomStack, leftFields);
-  bottomStack.addSpacer(20);
-  formatColumn(bottomStack, rightFields);
+  // Split the field data amongst N columns, and display the data
+  const chunkedFields = chunkArray(data.fields, NUM_COLUMNS);
+  chunkedFields.forEach(chunk => {
+    formatColumn(bottomStack, chunk);
+    bottomStack.addSpacer(10);
+  });
 
   return widget;
 }
@@ -281,4 +281,19 @@ function initializeFields() {
 
 function padNumber(num) {
   return num < 10 ? `0${num}` : num;
+}
+
+/**************************************
+ * Helper Functions
+ *************************************/
+
+function chunkArray(arr, chunkCount) {
+  const chunks = [];
+  while (arr.length) {
+    const chunkSize = Math.ceil(arr.length / chunkCount--);
+    const chunk = arr.slice(0, chunkSize);
+    chunks.push(chunk);
+    arr = arr.slice(chunkSize);
+  }
+  return chunks;
 }
