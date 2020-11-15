@@ -35,7 +35,7 @@ const PERIOD_CALENDAR_NAME = 'TODO';
 const PERIOD_EVENT_NAME = 'TODO';
 
 // Whether or not to use a background image for the widget (if false, use gradient color)
-const USE_BACKGROUND_IMAGE = true;
+const USE_BACKGROUND_IMAGE = false;
 
 /******************************************************************************
  * Initial Setups

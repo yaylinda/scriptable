@@ -91,7 +91,7 @@ const VERTICAL_DATA_GRID_SPACING = 2;
 const TEXT_SIZE = 10;
 
 // Whether or not to use a background image for the widget (if false, use gradient color)
-const USE_BACKGROUND_IMAGE = true;
+const USE_BACKGROUND_IMAGE = false;
 
 /**************************************
  * Initial Setups
