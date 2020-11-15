@@ -2,6 +2,8 @@
 // NOTE: This script uses the Cache script (https://github.com/yaylinda/scriptable/blob/main/Cache.js)
 // Make sure to add the Cache script in Scriptable as well!
 
+// NOTE 2: When setting up the widget, make sure to put something (anything) in the "Widget Params" field.
+
 /*-----------------
  * Configurations
  *---------------*/
@@ -55,6 +57,9 @@ const DATE_TEXT_FORMAT = new Intl.DateTimeFormat('en-US', {
 // What time should we start a daily log for the new day? (24hr format)
 const NEW_DAY_START = 5;
 
+// Whether or not to use a background image for the widget (if false, use gradient color)
+const USE_BACKGROUND_IMAGE = true;
+
 /**************************************
  * Initial Setups
  *************************************/
@@ -105,6 +110,32 @@ if (config.runsInApp) {
 
 // Create widget with data
 const widget = createWidget(data);
+
+// Set background image of widget, if flag is true
+if (USE_BACKGROUND_IMAGE) {
+  // Determine if our image exists and when it was saved.
+  const files = FileManager.local();
+  const path = files.joinPath(files.documentsDirectory(), 'daily-log-widget-background');
+  const exists = files.fileExists(path);
+
+  // If it exists and we're running in the widget, use photo from cache
+  if (exists && config.runsInWidget) {
+    widget.backgroundImage = files.readImage(path);
+
+  // If it's missing when running in the widget, use a gray background.
+  } else if (!exists && config.runsInWidget) {
+    const bgColor = new LinearGradient();
+    bgColor.colors = [new Color("#29323c"), new Color("#1c1c1c")];
+    bgColor.locations = [0.0, 1.0];
+    widget.backgroundGradient = bgColor;
+
+  // But if we're running in app, prompt the user for the image.
+  } else if (config.runsInApp && !args.widgetParameter){
+    const img = await Photos.fromLibrary();
+    widget.backgroundImage = img;
+    files.writeImage(path, img);
+  }
+}
 
 // Set widget
 Script.setWidget(widget);

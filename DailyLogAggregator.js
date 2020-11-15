@@ -1,13 +1,11 @@
-// Variables used by Scriptable.
-// These must be at the very top of the file. Do not edit.
-// icon-color: gray; icon-glyph: magic;
-
 /**************************************
  * Configurations
  *************************************/
 
 // NOTE: This script uses the Cache script (https://github.com/yaylinda/scriptable/blob/main/Cache.js)
 // Make sure to add the Cache script in Scriptable as well!
+
+// NOTE 2: When setting up the widget, make sure to put something (anything) in the "Widget Params" field.
 
 // This is the name of the directory (under Scriptable) in iCloud, to store the daily log files.
 const DAILY_LOG_CACHE_NAME = 'DailyLogs';
@@ -166,7 +164,7 @@ if (USE_BACKGROUND_IMAGE) {
     widget.backgroundGradient = bgColor;
 
   // But if we're running in app, prompt the user for the image.
-  } else if (config.runsInApp, && !args.widgetParameter){
+  } else if (config.runsInApp && !args.widgetParameter){
     const img = await Photos.fromLibrary();
     widget.backgroundImage = img;
     files.writeImage(path, img);

@@ -34,6 +34,9 @@ const PERSONAL_CALENDAR_NAME = 'TODO';
 const PERIOD_CALENDAR_NAME = 'TODO';
 const PERIOD_EVENT_NAME = 'TODO';
 
+// Whether or not to use a background image for the widget (if false, use gradient color)
+const USE_BACKGROUND_IMAGE = true;
+
 /******************************************************************************
  * Initial Setups
  *****************************************************************************/
@@ -56,6 +59,32 @@ const cache = new Cache('terminalWidget');
 // Fetch data and create widget
 const data = await fetchData();
 const widget = createWidget(data);
+
+// Set background image of widget, if flag is true
+if (USE_BACKGROUND_IMAGE) {
+  // Determine if our image exists and when it was saved.
+  const files = FileManager.local();
+  const path = files.joinPath(files.documentsDirectory(), 'terminal-widget-background');
+  const exists = files.fileExists(path);
+
+  // If it exists and we're running in the widget, use photo from cache
+  if (exists && config.runsInWidget) {
+    widget.backgroundImage = files.readImage(path);
+
+  // If it's missing when running in the widget, use a gradient black/dark-gray background.
+  } else if (!exists && config.runsInWidget) {
+    const bgColor = new LinearGradient();
+    bgColor.colors = [new Color("#29323c"), new Color("#1c1c1c")];
+    bgColor.locations = [0.0, 1.0];
+    widget.backgroundGradient = bgColor;
+
+  // But if we're running in app, prompt the user for the image.
+  } else if (config.runsInApp){
+    const img = await Photos.fromLibrary();
+    widget.backgroundImage = img;
+    files.writeImage(path, img);
+  }
+}
 
 Script.setWidget(widget);
 Script.complete();
