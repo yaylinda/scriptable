@@ -1,9 +1,13 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: gray; icon-glyph: magic;
+
 /**************************************
  * Configurations
  *************************************/
+
+// NOTE: This script uses the Cache script (https://github.com/yaylinda/scriptable/blob/main/Cache.js)
+// Make sure to add the Cache script in Scriptable as well!
 
 // This is the name of the directory (under Scriptable) in iCloud, to store the daily log files.
 const DAILY_LOG_CACHE_NAME = 'DailyLogs';
