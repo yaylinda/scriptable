@@ -6,7 +6,7 @@
  * CONSTANTS
  ============================================================================*/
 
-Date.prototype.addHours = function (numHours) {
+ Date.prototype.addHours = function (numHours) {
   const date = new Date(this.valueOf());
   date.setHours(date.getHours() + numHours);
   return date;
@@ -39,11 +39,15 @@ const DAY_OF_MONTH_FORMAT = new Intl.DateTimeFormat('en-US', {
 
 
 /**
- * Widget confugurations. Edit these to customize widget.
+ * Widget confugurations. Edit these to customize the widget.
  */
 const WIDGET_CONFIGURATIONS = {
   // Number of hours to show in the agenda
   numHours: 6,
+
+  // Calendars to show events from. Empty array means all calendars.
+  // Calendar names can be found in the "Calendar" App. The name must be an exact string match.
+  calendars: [],
 
   // Whether or not to use a background image for the widget
   useBackgroundImage: true,
@@ -337,7 +341,7 @@ async function setBackground(widget, { useBackgroundImage, backgroundColor }) {
   }
 }
 
-async function getEvents({ numHours }) {
+async function getEvents({ numHours, calendars }) {
   const todayEvents = await CalendarEvent.today([]);
   const tomorrowEvents = await CalendarEvent.tomorrow([]);
   const combinedEvents = todayEvents.concat(tomorrowEvents);
@@ -352,8 +356,10 @@ async function getEvents({ numHours }) {
     const start = new Date(event.startDate);
     const end = new Date(event.endDate);
 
-    // Filter out events that start between now and numHours from now
-    if (start <= inNumHours) {
+    // Filter for events that:
+    //   - start between now and numHours from now
+    //   - are in the specified array of calendars (if any)
+    if (start <= inNumHours && (calendars.length === 0 || calendars.includes(event.calendar.title))) {
       if (event.isAllDay) {
         if (!eventsByHour['all-day']) {
           eventsByHour['all-day'] = [];
