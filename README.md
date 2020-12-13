@@ -1,6 +1,14 @@
 # scriptable
 Playing around with various scripts for the Scriptable app on iOS.
 
+## CalendarEventsWidget
+This widget displays all-day events, and any upcoming events within the moving window of the next 6 hours (number of hours is configurable).
+
+![CalendarEventsWidget](/images/CalendarEventsWidget.png)
+![CalendarEventsWidget2](/images/CalendarEventsWidget2.png)
+
+
+
 ## DailyLogWidget v2 (AggregatedDailyLogs)
 And updated look to the DailyLogWidget, showing a data grid of activites completed for each day.
 
