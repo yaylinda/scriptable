@@ -2,10 +2,16 @@
 Playing around with various scripts for the Scriptable app on iOS.
 
 ## CalendarEventsWidget
-This widget displays all-day events, and any upcoming events within the moving window of the next 6 hours (number of hours is configurable).
+This widget displays all-day events, and any upcoming events within the moving window of the next 6 hours (number of hours is configurable). Also allows for filtering events from certain calendars, and will open the calendar of your choice on-press. 
+
+All widget configurations/behaviors can be found by updating `WIDGET_CONFIGURATIONS` (comments and descriptions included in the code).
 
 ![CalendarEventsWidget](/images/CalendarEventsWidget.png)
 ![CalendarEventsWidget2](/images/CalendarEventsWidget2.png)
+
+### Set Up
+Configure the widget set-up on your homescreen, as shown in the below screenshot: 
+![CalendarEventsWidgetSetup](/images/CalendarEventsWidgetSetup.png)
 
 ### TODO
 Multiple events for an hour are currently drawn on top of each other. Need to reduce the width of events based on how many are in each hour.
