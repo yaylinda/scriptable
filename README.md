@@ -7,7 +7,8 @@ This widget displays all-day events, and any upcoming events within the moving w
 ![CalendarEventsWidget](/images/CalendarEventsWidget.png)
 ![CalendarEventsWidget2](/images/CalendarEventsWidget2.png)
 
-
+### TODO
+Multiple events for an hour are currently drawn on top of each other. Need to reduce the width of events based on how many are in each hour.
 
 ## DailyLogWidget v2 (AggregatedDailyLogs)
 And updated look to the DailyLogWidget, showing a data grid of activites completed for each day.
