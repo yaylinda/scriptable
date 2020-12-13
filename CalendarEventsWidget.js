@@ -47,7 +47,7 @@ const WIDGET_CONFIGURATIONS = {
 
   // Calendars to show events from. Empty array means all calendars.
   // Calendar names can be found in the "Calendar" App. The name must be an exact string match.
-  calendars: ["linda.zheng@redfin.com"],
+  calendars: [],
 
   // Calendar callback app
   // When clicking on the widget, which calendar app should open?
