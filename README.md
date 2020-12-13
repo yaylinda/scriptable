@@ -1,6 +1,12 @@
 # scriptable
 Playing around with various scripts for the Scriptable app on iOS.
 
+## Widgets List
+- [CalendarEventsWidget](https://github.com/yaylinda/scriptable#calendareventswidget)
+- [DailyLogWidget v2 (AggregatedDailyLogs)](https://github.com/yaylinda/scriptable#dailylogwidget-v2-aggregateddailylogs)
+- [DailyLogWidget](https://github.com/yaylinda/scriptable#dailylogwidget)
+- [TerminalWidget](https://github.com/yaylinda/scriptable#terminalwidget)
+
 ## CalendarEventsWidget
 This widget displays all-day events, and any upcoming events within the moving window of the next 6 hours (number of hours is configurable). Also allows for filtering events from certain calendars, and will open the calendar of your choice on-press. 
 
