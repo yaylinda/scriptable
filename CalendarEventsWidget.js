@@ -47,7 +47,7 @@ const WIDGET_CONFIGURATIONS = {
 
   // Calendars to show events from. Empty array means all calendars.
   // Calendar names can be found in the "Calendar" App. The name must be an exact string match.
-  calendars: [],
+  calendars: ["linda.zheng@redfin.com"],
 
   // Calendar callback app
   // When clicking on the widget, which calendar app should open?
@@ -144,7 +144,7 @@ if (config.runsInWidget) {
 function drawWidget(widget, events, WIDGET_CONFIGURATIONS) {
   const mainStack = widget.addStack();
   mainStack.layoutHorizontally();
-  mainStack.spacing = 20;
+  mainStack.spacing = 30;
 
   // Left stack contains date, and all day events
   const leftStack = mainStack.addStack();
@@ -210,7 +210,7 @@ function drawLeftStack(stack, events, {
       stack.addSpacer(smallSpacer);
     }
   } else {
-    const noAllDayEventsText = dateStack.addText('No all-day events');
+    const noAllDayEventsText = stack.addText('No all-day events');
     noAllDayEventsText.textColor = defaultTextColor;
     noAllDayEventsText.font = new Font(fontBold, defaultTextSize);
   }
