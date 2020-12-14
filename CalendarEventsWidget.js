@@ -380,7 +380,7 @@ async function getEvents({ numHours, calendars }) {
     // Filter for events that:
     //   - start between now and numHours from now
     //   - are in the specified array of calendars (if any)
-    if (start <= inNumHours && (calendars.length === 0 || calendars.includes(event.calendar.title))) {
+    if (start <= inNumHours && end > now && (calendars.length === 0 || calendars.includes(event.calendar.title))) {
       if (event.isAllDay) { // All-day events
         if (!eventsByHour['all-day']) {
           eventsByHour['all-day'] = [];
