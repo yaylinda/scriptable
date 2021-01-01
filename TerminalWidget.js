@@ -86,6 +86,10 @@ if (USE_BACKGROUND_IMAGE) {
   }
 }
 
+if (config.runsInApp) {  
+  widget.presentMedium();
+}
+
 Script.setWidget(widget);
 Script.complete();
 
