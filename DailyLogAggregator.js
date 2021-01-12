@@ -329,7 +329,7 @@ function addTextToStack(stack, data) {
   textLine.font = new Font(`Menlo${isBold ? '-Bold' : ''}`, TEXT_SIZE);
 
   if (color) {
-    textLine.color = new Color(color);
+    textLine.textColor = new Color(color);
   }
 
   if (align === 'center') {
