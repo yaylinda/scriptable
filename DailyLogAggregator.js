@@ -296,7 +296,7 @@ function createWidget(data) {
     completionData.push({
       value: `[${completionRate}%]`, 
       align: 'right',
-      color: completionCount === data.fields.length ? '#66ff00' : '',
+      color: completionCount === data.fields.length ? '#66ff00' : '#ffffff',
     });
   });
 
