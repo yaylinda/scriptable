@@ -2,6 +2,7 @@
 Playing around with various scripts for the Scriptable app on iOS.
 
 ## Widgets List
+- [MultiDayCalendarWidget](https://github.com/yaylinda/scriptable#MultiDayCalendarWidget)
 - [CalendarEventsWidget](https://github.com/yaylinda/scriptable#calendareventswidget)
 - [DailyLogWidget v2 (AggregatedDailyLogs)](https://github.com/yaylinda/scriptable#dailylogwidget-v2-aggregateddailylogs)
 - [DailyLogWidget](https://github.com/yaylinda/scriptable#dailylogwidget)
