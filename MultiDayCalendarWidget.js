@@ -2,9 +2,9 @@
 // These must be at the very top of the file. Do not edit.
 // icon-color: deep-blue; icon-glyph: magic;
 
-/*=============================================================================
+/*========================================================
  * CONSTANTS
- ============================================================================*/
+ *======================================================*/
 Date.prototype.addDays = function (days) {
   var date = new Date(this.valueOf());
   date.setDate(date.getDate() + days);
@@ -39,52 +39,73 @@ Date.prototype.addMinutes = function (numMinutes) {
   return date;
 };
 
-/*=============================================================================
+/*========================================================
  * SCRIPT CONFIGURATIONS *** UPDATE ME!!! ***
- ============================================================================*/
+ *======================================================*/
 
 // Example: 12 PM
-const HOUR_FORMAT = new Intl.DateTimeFormat('en-US', {
+const HOUR_FORMAT = new Intl.DateTimeFormat(
+  'en-US', {
   hour: 'numeric',
 });
 
 // Example: Sat
-const DAY_OF_WEEK_FORMAT = new Intl.DateTimeFormat('en-US', {
+const DAY_OF_WEEK_FORMAT = new Intl.DateTimeFormat(
+  'en-US', {
   weekday: 'short',
 });
 
 // Example: 12
-const DAY_OF_MONTH_FORMAT = new Intl.DateTimeFormat('en-US', {
+const DAY_OF_MONTH_FORMAT = new Intl.DateTimeFormat(
+  'en-US', {
   day: 'numeric',
 });
 
 /**
- * Widget confugurations. Edit these to customize the widget.
+ * Widget confugurations. 
+ * Edit these to customize the widget.
  */
 const WIDGET_CONFIGURATIONS = {
-  // Number of hours to show in the widget
+  // Number of hours to show in the widget.
+  // It will show a moving window of this many hours, 
+  // across the specified number of days (numDays)
   numHours: 8,
+
+  // Use this to set the starting hour (between 0-23),
+  // of the window of time to show in the calendar.
+  // This is used with "numHours" to determine which hours 
+  // of each day to show in the widget.
+  // If this is set to -1, it will use the current hour as 
+  // the starting time.
+  startAt: -1,
 
   // Number of days to show in the widget
   numDays: 5,
 
-  // Calendars to show events from. Empty array means all calendars.
-  // Calendar names can be found in the "Calendar" App. The name must be an exact string match.
+  // Calendars to show events from. 
+  // An empty array means all calendars.
+  // Calendar names can be found in the "Calendar" App. 
+  // The name must be an exact string match.
   calendars: [],
 
   // Calendar callback app
-  // When clicking on the widget, which calendar app should open?
+  // When clicking on the widget, 
+  // which calendar app should open?
   // Must be one of the supported apps:
   //   - calshow - Default iOS Calendar
   //   - googlecalendar - Google Calendar
   //   - x-fantastical3 - Fantastical
   callbackCalendarApp: 'calshow',
 
-  // Whether or not to use a background image for the widget
+  // Whether or not the widget will use a backend image.
   useBackgroundImage: true,
 
-  // If no background image, default grayish background color gradient
-  backgroundColor: [new Color("#29323c"), new Color("#1c1c1c")],
+  // If no background image, 
+  // default to a grayish background color gradient.
+  backgroundColor: [
+    new Color("#29323c"),
+    new Color("#1c1c1c")
+  ],
 
   // Font to use in Widget
   font: 'Menlo',
@@ -131,14 +152,15 @@ const WIDGET_CONFIGURATIONS = {
   // Width of the hours label column stack
   hoursLabelStackWidth: 30,
 
-  // Vertical spacing, used between day-of-week label and all-day events
+  // Vertical spacing, used between the day-of-week label 
+  // and all-day events.
   verticalSpacing: 2,
 };
 
 
-/*=============================================================================
+/*========================================================
  * WIDGET SET UP / PRESENTATION
- ============================================================================*/
+ *======================================================*/
 
 const widget = new ListWidget();
 
@@ -148,14 +170,14 @@ const events = await getEvents(WIDGET_CONFIGURATIONS);
 
 drawWidget(widget, events, WIDGET_CONFIGURATIONS);
 
-console.log(`args.widgetParameter: ${JSON.stringify(args.widgetParameter)}`);
-
 if (config.runsInWidget) {
   Script.setWidget(widget);
   Script.complete();
 } else if (args.widgetParameter === 'callback') {
   Script.setWidget(widget);
-  const timestamp = (new Date().getTime() - new Date('2001/01/01').getTime()) / 1000;
+  const timestamp = (
+    new Date().getTime() - new Date('2001/01/01').getTime()
+  ) / 1000;
   const callback = new CallbackURL(`${WIDGET_CONFIGURATIONS.callbackCalendarApp}:${timestamp}`);
   callback.open();
   Script.complete();
@@ -165,9 +187,9 @@ if (config.runsInWidget) {
   Script.complete();
 }
 
-/*=============================================================================
+/*========================================================
  * DRAW WIDGET
- ============================================================================*/
+ *======================================================*/
 
 /**
  * Main draw widget function.
@@ -187,10 +209,23 @@ function drawWidget(widget, events, WIDGET_CONFIGURATIONS) {
   });
   const maxNumAllDayEvents = Math.max(...numAllDayEvents);
 
+  // Determine which hour of the day to start displaying events in the widget
+  const startingDateAtHour = new Date();
+  if (WIDGET_CONFIGURATIONS.startAt > -1) {
+    startingDateAtHour.setHours(WIDGET_CONFIGURATIONS.startAt);
+  }
+
+  // Create an array of hour labels for the widget
+  const hourLabels = [];
+  for (let i = 0; i < WIDGET_CONFIGURATIONS.numHours; i++) {
+    const dateAtHour = startingDateAtHour.addHours(i);
+    hourLabels.push(HOUR_FORMAT.format(dateAtHour));
+  }
+
   // Draw the hour label column
   const hoursLabelStack = mainStack.addStack();
   hoursLabelStack.layoutVertically();
-  drawHoursLabelStack(hoursLabelStack, maxNumAllDayEvents, WIDGET_CONFIGURATIONS);
+  drawHoursLabelStack(hoursLabelStack, maxNumAllDayEvents, hourLabels, WIDGET_CONFIGURATIONS);
 
   // Draw one column for each day's events
   Object.keys(events).forEach(day => {
@@ -198,14 +233,14 @@ function drawWidget(widget, events, WIDGET_CONFIGURATIONS) {
     dayEventsStack.layoutVertically();
 
     const dayEvents = events[day];
-    drawDayEventsStack(dayEventsStack, day, dayEvents, maxNumAllDayEvents, WIDGET_CONFIGURATIONS);
+    drawDayEventsStack(dayEventsStack, day, dayEvents, maxNumAllDayEvents, hourLabels, WIDGET_CONFIGURATIONS);
   });
 }
 
 /**
  * Function to draw events of one day, as a vertical column stack.
  */
-function drawDayEventsStack(stack, day, events, maxNumAllDayEvents, {
+function drawDayEventsStack(stack, day, events, maxNumAllDayEvents, hourLabels, {
   defaultTextColor,
   font,
   fontBold,
@@ -287,10 +322,8 @@ function drawDayEventsStack(stack, day, events, maxNumAllDayEvents, {
   // Y Offset based on number of all-day events
   const offsetY = (maxNumAllDayEvents + 1) * allDayEventHeight + verticalSpacing + maxNumAllDayEvents;
 
-  const currentDate = new Date();
-
   // Loop through all the hours and draw the lines
-  for (let i = 0; i < numHours; i++) {
+  for (let i = 0; i < hourLabels.length; i++) {
     const topPointY = offsetY + halfHourEventHeight * 2 * i;
     const midPointY = topPointY + halfHourEventHeight;
 
@@ -310,10 +343,8 @@ function drawDayEventsStack(stack, day, events, maxNumAllDayEvents, {
   }
 
   // Loop through all the hours and draw the events (on top of the lines)
-  for (let i = 0; i < numHours; i++) {
-
-    const currentHourDate = currentDate.addHours(i);
-    const currentHourText = HOUR_FORMAT.format(currentHourDate);
+  for (let i = 0; i < hourLabels.length; i++) {
+    const currentHourText = hourLabels[i];
 
     const topPointY = offsetY + halfHourEventHeight * 2 * i;
 
@@ -359,14 +390,18 @@ function drawDayEventsStack(stack, day, events, maxNumAllDayEvents, {
     }
   }
 
-  // Draw line at the current time
-  const currentMinute = new Date().getMinutes();
-  let currentMinuteY = offsetY + (currentMinute * halfHourEventHeight) / 30;
-  const currentMinutePath = new Path();
-  currentMinutePath.addRect(new Rect(eventsLeftPadding, currentMinuteY, stackWidth, lineHeight));
-  draw.addPath(currentMinutePath);
-  draw.setFillColor(Color.red());
-  draw.fillPath();
+  // Draw line at the current time (if the current time is within the time window)
+  const currentDateTime = new Date();
+  const currentHourLabel = HOUR_FORMAT.format(currentDateTime);
+  if (hourLabels.includes(currentHourLabel)) {
+    const currentMinute = currentDateTime.getMinutes();
+    let currentMinuteY = offsetY + (currentMinute * halfHourEventHeight) / 30;
+    const currentMinutePath = new Path();
+    currentMinutePath.addRect(new Rect(eventsLeftPadding, currentMinuteY, stackWidth, lineHeight));
+    draw.addPath(currentMinutePath);
+    draw.setFillColor(Color.red());
+    draw.fillPath();
+  }
 
   // Put the content on the widget stack
   const drawn = draw.getImage();
@@ -376,7 +411,7 @@ function drawDayEventsStack(stack, day, events, maxNumAllDayEvents, {
 /**
  * Function to draw the left-most vertical column stack of the hours labels.
  */
-function drawHoursLabelStack(stack, maxNumAllDayEvents, {
+function drawHoursLabelStack(stack, maxNumAllDayEvents, hourLabels, {
   defaultTextColor,
   font,
   eventTextSize,
@@ -386,6 +421,7 @@ function drawHoursLabelStack(stack, maxNumAllDayEvents, {
   hoursLabelStackWidth,
   verticalSpacing,
 }) {
+  // Set up the Draw Context for the hours label stack
   const draw = new DrawContext();
   draw.opaque = false;
   draw.respectScreenScale = true;
@@ -397,13 +433,9 @@ function drawHoursLabelStack(stack, maxNumAllDayEvents, {
   // Y Offset based on number of all-day events
   const offsetY = (maxNumAllDayEvents + 1) * allDayEventHeight + verticalSpacing + maxNumAllDayEvents;
 
-  const currentDate = new Date();
-
   // Loop through all the hours and draw the lines
-  for (let i = 0; i < numHours; i++) {
-
-    const currentHourDate = currentDate.addHours(i);
-    const currentHourText = HOUR_FORMAT.format(currentHourDate);
+  for (let i = 0; i < hourLabels.length; i++) {
+    const currentHourText = hourLabels[i];
 
     const topPointY = offsetY + halfHourEventHeight * 2 * i - (i * lineHeight);
 
@@ -418,9 +450,9 @@ function drawHoursLabelStack(stack, maxNumAllDayEvents, {
   stack.addImage(drawn);
 }
 
-/*=============================================================================
+/*========================================================
  * FUNCTIONS
- ============================================================================*/
+ *======================================================*/
 
 /**
  * Fetch calendar events for the given number of days (from today), and from the given calendars.
@@ -438,11 +470,19 @@ async function getEvents({ numDays, calendars }) {
     const startOfDay = day.startOfDay();
     const endOfDay = day.endOfDay();
 
-    const dayEvents = await CalendarEvent.between(startOfDay, endOfDay, calendars);
+    const dayEvents = await CalendarEvent.between(startOfDay, endOfDay);
 
     const eventsByHour = {};
 
-    dayEvents.forEach(e => {
+    for (let i = 0; i < dayEvents.length; i++) {
+      const e = dayEvents[i];
+      if (calendars.length > 0 && !calendars.includes(e.calendar.title)) {
+        // If user has specified a list of calendars, 
+        // filter out the events that are NOT from the given calendar names.
+        // Otherwise, include the event.
+        continue;
+      }
+
       const start = new Date(e.startDate);
       const end = new Date(e.endDate);
 
@@ -474,8 +514,7 @@ async function getEvents({ numDays, calendars }) {
 
         eventsByHour[hourKey].push(eventObj);
       }
-    });
-
+    }
     events[startOfDay] = eventsByHour;
   }
 
@@ -485,15 +524,21 @@ async function getEvents({ numDays, calendars }) {
 /**
  * Set the background of the widget.
  * 
- * If useBackgroundImage is false, defaults the background to the given backgroundColor.
+ * If useBackgroundImage is false, 
+ * defaults the background to the given backgroundColor.
  * 
  * Update WIDGET_CONFIGURATIONS to configure. 
  */
-async function setBackground(widget, { useBackgroundImage, backgroundColor }) {
+async function setBackground(widget, {
+  useBackgroundImage, backgroundColor
+}) {
   if (useBackgroundImage) {
     // Determine if our image exists and when it was saved.
     const files = FileManager.local();
-    const path = files.joinPath(files.documentsDirectory(), 'multi-day-calendar-widget-background');
+    const path = files.joinPath(
+      files.documentsDirectory(),
+      'multi-day-calendar-widget-background'
+    );
     const exists = files.fileExists(path);
 
     // If it exists and we're running in the widget, use photo from cache
