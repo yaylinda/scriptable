@@ -2,11 +2,20 @@
 Playing around with various scripts for the Scriptable app on iOS.
 
 ## Widgets List
+- [WordClockWidget](https://github.com/yaylinda/scriptable#WordClockWidget)
 - [MultiDayCalendarWidget](https://github.com/yaylinda/scriptable#MultiDayCalendarWidget)
 - [CalendarEventsWidget](https://github.com/yaylinda/scriptable#calendareventswidget)
 - [DailyLogWidget v2 (AggregatedDailyLogs)](https://github.com/yaylinda/scriptable#dailylogwidget-v2-aggregateddailylogs)
 - [DailyLogWidget](https://github.com/yaylinda/scriptable#dailylogwidget)
 - [TerminalWidget](https://github.com/yaylinda/scriptable#terminalwidget)
+
+## WordClockWidget
+This widget displays the current (or most recently refreshed) time as a word clock. The widget can be customized to use a background photo, or background color; font name, size, and color, and other things. See `WIDGET_CONFIGURATIONS` for other configurable variables.
+
+![WordClockWidget](/images/WordClockWidget.png)
+
+#### NOTE
+Due to the delay in the Scriptable widget refresh, the time displayed might be a bit behind... there is really no workaround for this issue at this time. 
 
 ## MultiDayCalendarWidget
 This widget displays events from your calendars for the next given number of days, with a customizable window of the number of hours to show. The number of days, number of hours, and the starting hour, are configurable within the script. The configuration also allows for filtering events from certain calendars. Please use the `LARGE` widget size for best display results. 
