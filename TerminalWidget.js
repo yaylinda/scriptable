@@ -28,7 +28,7 @@ const COLORS = {
 
 // TODO: PLEASE SET THESE VALUES
 const NAME = 'TODO';
-const WEATHER_API_KEY = 'TODO';
+const WEATHER_API_KEY = 'TODO'; // https://home.openweathermap.org/api_keys (account needed)
 const WORK_CALENDAR_NAME = 'TODO';
 const PERSONAL_CALENDAR_NAME = 'TODO';
 const PERIOD_CALENDAR_NAME = 'TODO';

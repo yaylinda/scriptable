@@ -9,7 +9,7 @@ Playing around with various scripts for the Scriptable app on iOS.
 - [TerminalWidget](https://github.com/yaylinda/scriptable#terminalwidget)
 
 ## MultiDayCalendarWidget
-This widget displays events from your calendars for the next given number of days, with a moving window of the next 8 hours. The number of days, and number of hours to show are configurable within the script. Also allows for filtering events from certain calendars. Please use the `LARGE` widget size for best display results. 
+This widget displays events from your calendars for the next given number of days, with a customizable window of the number of hours to show. The number of days, number of hours, and the starting hour, are configurable within the script. The configuration also allows for filtering events from certain calendars. Please use the `LARGE` widget size for best display results. 
 
 All widget configurations/behaviors can be found by updating the `WIDGET_CONFIGURATIONS` (comments and descriptions included in the code).
 
