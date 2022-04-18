@@ -16,26 +16,26 @@
 
 const WIDGET_CONFIGURATIONS = {
     // Width and height of widget
-    width: 1000,
-    height: 1000,
+    width: 500,
+    height: 500,
   
     // Height of top banner
-    bannerHeight: 200,
+    bannerHeight: 100,
   
     // Diameter of logo circle
-    logoCircleDiameter: 250,
+    logoCircleDiameter: 125,
   
     // How much roundness of outer rectangles
-    roundness: 50,
+    roundness: 25,
   
     // Font size
-    fontSize: 50,
+    fontSize: 25,
   
     // How far from left side the content is aligned
-    xOffset: 30,
+    xOffset: 15,
   
     // Color of the banner (this is the "real" Discord color)
-    bannerColor: new Color("#5865f2"),
+    bannerColor: new Color("#5865F2"),
   
     // Color of the bottom part of the banner (this is the "real" Discord color)
     bannerBottomColor: new Color("#18191c"),
@@ -43,20 +43,26 @@ const WIDGET_CONFIGURATIONS = {
     // Background color of the information section (this is the "real" Discord color)
     infoBackgroundColor: new Color("#36393f"),
   
+    // Set this to false if you do not want to use a background image for the widget
+    useBackgroundImage: true,
+  
+    // Set the color you'd like the background to be if you don't use a background image
+    backgroundColor: Color.white(),
+  
     /**
      * CHANGE ME!
      *
      * Follow instructions here: https://home.openweathermap.org/api_keys
      */
-    weatherApiKey: "<TODO>",
+     weatherApiKey: "<TODO>",
   
-    /**
-     * CHANGE ME!
-     *
-     * Get the name of any calendar you want from the iOS
-     * Calendar App.
-     */
-    calendarName: "<TODO>",
+     /**
+      * CHANGE ME!
+      *
+      * Get the name of any calendar you want from the iOS
+      * Calendar App.
+      */
+     calendarName: "<TODO>",
   };
   
   /*=========================================================
@@ -133,6 +139,8 @@ const WIDGET_CONFIGURATIONS = {
   
   const widget = new ListWidget();
   
+  await setBackground(widget, WIDGET_CONFIGURATIONS);
+  
   const cache = new Cache("discord-widget");
   const data = await fetchData();
   const logo = await getLogo();
@@ -147,9 +155,6 @@ const WIDGET_CONFIGURATIONS = {
     widget.presentLarge();
     Script.complete();
   }
-  
-  Script.setWidget(widget);
-  Script.complete();
   
   /*=========================================================
    * DRAW WIDGET
@@ -174,7 +179,6 @@ const WIDGET_CONFIGURATIONS = {
   
     const mainStack = widget.addStack();
     mainStack.layoutVertically();
-    mainStack.backgroundColor = Color.clear();
   
     /////////////////////////////////////
     // Set up draw context
@@ -184,7 +188,7 @@ const WIDGET_CONFIGURATIONS = {
     draw.respectScreenScale = true;
     draw.size = new Size(width, height);
   
-    const roundnessOffset = roundness + 30;
+    const roundnessOffset = roundness + 15;
   
     /////////////////////////////////////
     // Draw bottom rectangle
@@ -221,7 +225,7 @@ const WIDGET_CONFIGURATIONS = {
     // Draw bottom filler for banner rectangle
     /////////////////////////////////////
     const fillerBannerRectPath = new Path();
-    fillerBannerRectPath.addRect(new Rect(0, 100, width, bannerHeight - 100));
+    fillerBannerRectPath.addRect(new Rect(0, 50, width, bannerHeight - 50));
     draw.addPath(fillerBannerRectPath);
     draw.setFillColor(bannerColor);
     draw.fillPath();
@@ -249,10 +253,10 @@ const WIDGET_CONFIGURATIONS = {
     const innerCirclePath = new Path();
     innerCirclePath.addEllipse(
       new Rect(
-        xOffset + 20,
-        bannerHeight - (logoCircleDiameter - 40) / 2,
-        logoCircleDiameter - 40,
-        logoCircleDiameter - 40
+        xOffset + 10,
+        bannerHeight - (logoCircleDiameter - 20) / 2,
+        logoCircleDiameter - 20,
+        logoCircleDiameter - 20
       )
     );
     draw.addPath(innerCirclePath);
@@ -266,10 +270,10 @@ const WIDGET_CONFIGURATIONS = {
     draw.drawImageInRect(
       logo,
       new Rect(
-        xOffset,
-        bannerHeight - (logoCircleDiameter - 170),
-        logoCircleDiameter,
-        logoCircleDiameter - 100
+        xOffset + 10,
+        bannerHeight - (logoCircleDiameter - 20) / 2,
+        logoCircleDiameter - 20,
+        logoCircleDiameter - 20
       )
     );
   
@@ -278,7 +282,7 @@ const WIDGET_CONFIGURATIONS = {
     /////////////////////////////////////
   
     const smallCirclePath = new Path();
-    smallCirclePath.addEllipse(new Rect(225, 250, 50, 50));
+    smallCirclePath.addEllipse(new Rect(113, 125, 25, 25));
     draw.addPath(smallCirclePath);
     draw.setFillColor(Color.green());
     draw.fillPath();
@@ -296,16 +300,20 @@ const WIDGET_CONFIGURATIONS = {
   
     draw.setTextColor(Color.white());
     draw.setFont(Font.boldRoundedSystemFont(fontSize));
-    draw.drawText(dateParts[0], new Point(xOffset, 350));
+    draw.drawText(dateParts[0], new Point(xOffset, 175));
   
     draw.setTextColor(Color.lightGray());
-    draw.drawText(`#${dateParts[1]}`, new Point(210, 350));
+    draw.drawText(`#${dateParts[1]}`, new Point(105, 175));
   
     /////////////////////////////////////
     // Draw bottom filler for banner rectangle
     /////////////////////////////////////
     const aboutMeRectPath = new Path();
-    aboutMeRectPath.addRect(new Rect(0, 425, width, height - 425));
+    aboutMeRectPath.addRoundedRect(
+      new Rect(0, 213, width, height - 213),
+      roundness,
+      roundness
+    );
     draw.addPath(aboutMeRectPath);
     draw.setFillColor(infoBackgroundColor);
     draw.fillPath();
@@ -314,8 +322,8 @@ const WIDGET_CONFIGURATIONS = {
     //Draw Weather
     /////////////////////////////////////
   
-    let startingY = 450;
-    const lineSpacing = 55;
+    let startingY = 225;
+    const lineSpacing = 28;
   
     draw.setTextColor(Color.lightGray());
     draw.setFont(Font.boldRoundedSystemFont(fontSize));
@@ -350,7 +358,7 @@ const WIDGET_CONFIGURATIONS = {
       draw.setFont(Font.boldRoundedSystemFont(fontSize));
       draw.drawText(
         "MY EVENTS",
-        new Point(xOffset, (startingY += lineSpacing + 20))
+        new Point(xOffset, (startingY += lineSpacing + 10))
       );
   
       for (let event of events) {
@@ -365,26 +373,25 @@ const WIDGET_CONFIGURATIONS = {
         draw.setTextColor(Color.lightGray());
   
         draw.setFont(Font.thinRoundedSystemFont(fontSize));
-        draw.drawText(`[${startTime}-${endTime}]`, new Point(80, startingY));
+        draw.drawText(`[${startTime}-${endTime}]`, new Point(30, startingY));
         draw.setFont(Font.regularRoundedSystemFont(fontSize));
-        draw.drawText(`${event.title}`, new Point(525, startingY));
+        draw.drawText(`${event.title}`, new Point(260, startingY));
       }
     }
   
     /////////////////////////////////////
     //last updated
     /////////////////////////////////////
-    const { lastUpdated } = data;
     const dateTimeFormatter = new DateFormatter();
     dateTimeFormatter.locale = "en";
     dateTimeFormatter.useShortDateStyle();
     dateTimeFormatter.useShortTimeStyle();
   
     draw.setTextColor(Color.lightGray());
-    draw.setFont(Font.italicSystemFont(30));
+    draw.setFont(Font.italicSystemFont(15));
     draw.drawText(
-      `Last Updated: ${dateTimeFormatter.string(new Date(lastUpdated))}`,
-      new Point(550, 950)
+      `Last Updated: ${dateTimeFormatter.string(new Date())}`,
+      new Point(260, 7)
     );
   
     /////////////////////////////////////
@@ -410,14 +417,9 @@ const WIDGET_CONFIGURATIONS = {
     // Fetch calendar events for today and tomorrow
     const events = await fetchEventsForCalendar(calendarNames);
   
-    // Get last data update time (and set)
-    const lastUpdated = await getLastUpdated();
-    cache.write(CACHE_KEY_LAST_UPDATED, new Date().getTime());
-  
     return {
       weather,
       events,
-      lastUpdated,
     };
   }
   
@@ -569,27 +571,55 @@ const WIDGET_CONFIGURATIONS = {
   }
   
   /**
-   * Get the last updated timestamp from the Cache.
-   */
-  async function getLastUpdated() {
-    let cachedLastUpdated = await cache.read(CACHE_KEY_LAST_UPDATED);
-  
-    if (!cachedLastUpdated) {
-      cachedLastUpdated = new Date().getTime();
-      cache.write(CACHE_KEY_LAST_UPDATED, cachedLastUpdated);
-    }
-  
-    return cachedLastUpdated;
-  }
-  
-  /**
    * Fetch the discord logo image
    */
   async function getLogo() {
     const request = new Request(
-      "https://logos-world.net/wp-content/uploads/2020/12/Discord-Logo.png"
+      "https://theme.zdassets.com/theme_assets/678183/84b82d07b293907113d9d4dafd29bfa170bbf9b6.ico"
     );
     const image = await request.loadImage();
     return image;
+  }
+  
+  /**
+   * Set the background of the widget.
+   */
+  async function setBackground(widget, { useBackgroundImage, backgroundColor }) {
+    if (useBackgroundImage) {
+      // Determine if our image exists and when it was saved.
+      const files = FileManager.local();
+      const path = files.joinPath(
+        files.documentsDirectory(),
+        "multi-day-calendar-widget-background"
+      );
+      const exists = files.fileExists(path);
+  
+      // If it exists and we're running in the widget, use photo from cache
+      // Or we're invoking the script to run FROM the widget with a widgetParameter
+      if (
+        (exists && config.runsInWidget) ||
+        args.widgetParameter === "callback"
+      ) {
+        widget.backgroundImage = files.readImage(path);
+  
+        // If it's missing when running in the widget, fallback to backgroundColor
+      } else if (!exists && config.runsInWidget) {
+        const bgColor = new LinearGradient();
+        bgColor.colors = backgroundColor;
+        bgColor.locations = [0.0, 1.0];
+        widget.backgroundGradient = bgColor;
+  
+        // But if we're running in app, prompt the user for the image.
+      } else if (config.runsInApp) {
+        const img = await Photos.fromLibrary();
+        widget.backgroundImage = img;
+        files.writeImage(path, img);
+      }
+    } else {
+      const bgColor = new LinearGradient();
+      bgColor.colors = backgroundColor;
+      bgColor.locations = [0.0, 1.0];
+      widget.backgroundGradient = bgColor;
+    }
   }
   
