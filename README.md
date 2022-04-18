@@ -23,7 +23,7 @@ Please make sure to update `WIDGET_CONFIGURATIONS` to set things like your openw
 - Background colors
 - Icon
 
-I would also reccommend using the GenerateTransparentBackground script and using the output of that as the background for the Discord Widget. Then you can get a look like the screenshot below:
+I would also reccommend getting the [GenerateTransparentBackground](https://github.com/yaylinda/scriptable/blob/main/GenerateTransparentBackground.js) script and using the output of that as the background for the Discord Widget. Then you can get a look like the screenshot below:
 
 ![DiscordWidget](/images/DiscordWidget.png)
 
