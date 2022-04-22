@@ -2,12 +2,30 @@
 Playing around with various scripts for the Scriptable app on iOS.
 
 ## Widgets List
+- [DiscordWidget](https://github.com/yaylinda/scriptable#DiscordWidget)
 - [WordClockWidget](https://github.com/yaylinda/scriptable#WordClockWidget)
 - [MultiDayCalendarWidget](https://github.com/yaylinda/scriptable#MultiDayCalendarWidget)
 - [CalendarEventsWidget](https://github.com/yaylinda/scriptable#calendareventswidget)
 - [DailyLogWidget v2 (AggregatedDailyLogs)](https://github.com/yaylinda/scriptable#dailylogwidget-v2-aggregateddailylogs)
 - [DailyLogWidget](https://github.com/yaylinda/scriptable#dailylogwidget)
 - [TerminalWidget](https://github.com/yaylinda/scriptable#terminalwidget)
+
+## DiscordWidget
+Displays useful information about your day in a Discord-themed widget! 
+
+Currently shows information such as:
+- Today's date
+- Weather (temperature, feels like, high, low, conditions) in your local area
+- Any upcoming events on your calendar
+
+Please make sure to update `WIDGET_CONFIGURATIONS` to set things like your openweather.api API key, and to see other configurable variables, such as:
+- Banner color
+- Background colors
+- Icon
+
+I would also reccommend getting the [GenerateTransparentBackground](https://github.com/yaylinda/scriptable/blob/main/GenerateTransparentBackground.js) script and using the output of that as the background for the Discord Widget. Then you can get a look like the screenshot below:
+
+![DiscordWidget](/images/DiscordWidget.png)
 
 ## WordClockWidget
 This widget displays the current (or most recently refreshed) time as a word clock. The widget can be customized to use a background photo, or background color; font name, size, and color, and other things. See `WIDGET_CONFIGURATIONS` for other configurable variables.

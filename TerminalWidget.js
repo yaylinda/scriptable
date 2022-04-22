@@ -113,10 +113,12 @@ function createWidget(data) {
   console.log(`Creating widget with data: ${JSON.stringify(data)}`);
 
   const widget = new ListWidget();
+  if  (!USE_BACKGROUND_IMAGE) {
   const bgColor = new LinearGradient();
   bgColor.colors = [new Color(COLORS.bg0), new Color(COLORS.bg1)];
   bgColor.locations = [0.0, 1.0];
   widget.backgroundGradient = bgColor;
+  }
   widget.setPadding(10, 15, 15, 10);
 
   const stack = widget.addStack();
