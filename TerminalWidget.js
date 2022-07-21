@@ -28,6 +28,7 @@ const COLORS = {
 
 // TODO: PLEASE SET THESE VALUES
 const NAME = 'TODO';
+const TEMP_UNIT = 'imperial'; //set to metric for Celsius or to imperial for Fahrenheit
 const WEATHER_API_KEY = 'TODO'; // https://home.openweathermap.org/api_keys (account needed)
 const WORK_CALENDAR_NAME = 'TODO';
 const PERSONAL_CALENDAR_NAME = 'TODO';
@@ -160,6 +161,7 @@ function createWidget(data) {
   periodLine.textColor = new Color(COLORS.period);
   periodLine.font = new Font(FONT_NAME, FONT_SIZE);
 
+
   // Line 7 - Various Device Stats
   const deviceStatsLine = stack.addText(`📊 | ⚡︎ ${data.device.battery}%, ☀ ${data.device.brightness}%`);
   deviceStatsLine.textColor = new Color(COLORS.deviceStats);
@@ -223,7 +225,7 @@ async function fetchWeather() {
   if (!location) {
     location = DEFAULT_LOCATION;
   }
-  const url = "https://api.openweathermap.org/data/2.5/onecall?lat=" + location.latitude + "&lon=" + location.longitude + "&exclude=minutely,hourly,alerts&units=imperial&lang=en&appid=" + WEATHER_API_KEY;
+  const url = "https://api.openweathermap.org/data/2.5/onecall?lat=" + location.latitude + "&lon=" + location.longitude + "&exclude=minutely,hourly,alerts&units=" + TEMP_UNIT + "&lang=en&appid=" + WEATHER_API_KEY;
   const address = await Location.reverseGeocode(location.latitude, location.longitude);
   const data = await fetchJson(url);
 
