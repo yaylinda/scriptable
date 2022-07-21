@@ -122,7 +122,7 @@ function createWidget(data) {
 
   // Line 0 - Last Login
   const timeFormatter = new DateFormatter();
-  timeFormatter.locale = "de";
+  timeFormatter.locale = "en";
   timeFormatter.useNoDateStyle();
   timeFormatter.useShortTimeStyle();
 
@@ -156,11 +156,10 @@ function createWidget(data) {
   locationLine.textColor = new Color(COLORS.location);
   locationLine.font = new Font(FONT_NAME, FONT_SIZE);
 
-  /* Line 6 - Period
+  // Line 6 - Period
   const periodLine = stack.addText(`🩸 | ${data.period}`);
   periodLine.textColor = new Color(COLORS.period);
   periodLine.font = new Font(FONT_NAME, FONT_SIZE);
-*/
 
 
   // Line 7 - Various Device Stats
