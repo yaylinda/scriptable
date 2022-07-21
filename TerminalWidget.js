@@ -161,7 +161,6 @@ function createWidget(data) {
   periodLine.textColor = new Color(COLORS.period);
   periodLine.font = new Font(FONT_NAME, FONT_SIZE);
 
-
   // Line 7 - Various Device Stats
   const deviceStatsLine = stack.addText(`📊 | ⚡︎ ${data.device.battery}%, ☀ ${data.device.brightness}%`);
   deviceStatsLine.textColor = new Color(COLORS.deviceStats);
