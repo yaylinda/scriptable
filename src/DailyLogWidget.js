@@ -1,3 +1,6 @@
+// Variables used by Scriptable.
+// These must be at the very top of the file. Do not edit.
+// icon-color: pink; icon-glyph: magic;
 
 // NOTE: This script uses the Cache script (https://github.com/yaylinda/scriptable/blob/main/Cache.js)
 // Make sure to add the Cache script in Scriptable as well!

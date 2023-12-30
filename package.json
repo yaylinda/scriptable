@@ -1,4 +1,9 @@
 {
+  "name": "scriptable",
+  "version": "1.0.0",
+  "eslintConfig": {
+    "extends": "@scriptable-ios"
+  },
   "devDependencies": {
     "@scriptable-ios/eslint-config": "^1.7.0",
     "@types/scriptable-ios": "^1.7.5",
