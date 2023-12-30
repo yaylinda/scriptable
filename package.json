@@ -1,13 +1,23 @@
 {
   "name": "scriptable",
   "version": "1.0.0",
-  "eslintConfig": {
-    "extends": "@scriptable-ios"
+  "scripts": {
+    "tsc": "tsc",
+    "lint": "eslint src --ext .ts --fix",
+    "cleanJS": "rm *.js",
+    "cleanDeps": "rm -rf node_modules && rm package-lock.json"
   },
   "devDependencies": {
     "@scriptable-ios/eslint-config": "^1.7.0",
     "@types/scriptable-ios": "^1.7.5",
+    "@typescript-eslint/eslint-plugin": "^6.16.0",
+    "@typescript-eslint/parser": "^6.16.0",
     "eslint": "^8.56.0",
-    "eslint-plugin-ios-scriptable": "^0.1.0"
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-import-resolver-typescript": "^3.6.1",
+    "eslint-plugin-autofix": "^1.1.0",
+    "eslint-plugin-ios-scriptable": "^0.1.0",
+    "eslint-plugin-prettier": "^5.1.2",
+    "typescript": "^5.3.3"
   }
 }
