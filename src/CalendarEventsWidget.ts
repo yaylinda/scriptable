@@ -3,17 +3,32 @@
 // icon-color: orange; icon-glyph: magic;
 
 /*=============================================================================
+ * Types
+ ============================================================================*/
+interface CalendarEventData {
+  start?: Date,
+  end?: Date,
+  startMinute?: number,
+  title: string,
+  color: string,
+  duration?: number,
+}
+
+type CalendarEventsByHour = Record<'all-day' | string, CalendarEventData[]>
+
+
+/*=============================================================================
  * CONSTANTS
  ============================================================================*/
 
- Date.prototype.addHours = function (numHours) {
-  const date = new Date(this.valueOf());
+const addHours = (input: Date, numHours: number) => {
+  const date = new Date(input.valueOf());
   date.setHours(date.getHours() + numHours);
   return date;
 };
 
-Date.prototype.addMinutes = function (numMinutes) {
-  const date = new Date(this.valueOf());
+const addMinutes = (input: Date, numMinutes: number) => {
+  const date = new Date(input);
   date.setMinutes(date.getMinutes() + numMinutes);
   return date;
 };
@@ -55,13 +70,13 @@ const WIDGET_CONFIGURATIONS = {
   //   - calshow - Default iOS Calendar
   //   - googlecalendar - Google Calendar
   //   - x-fantastical3 - Fantastical
-  callbackCalendarApp: 'calshow', 
+  callbackCalendarApp: 'calshow',
 
   // Whether or not to use a background image for the widget
   useBackgroundImage: true,
 
   // If no background, default grayish background color gradient
-  backgroundColor: [new Color("#29323c"), new Color("#1c1c1c")],
+  backgroundColor: [new Color('#29323c'), new Color('#1c1c1c')],
 
   // Font to use in Widget
   font: 'Menlo',
@@ -112,36 +127,52 @@ const WIDGET_CONFIGURATIONS = {
 /*=============================================================================
  * WIDGET SET UP / PRESENTATION
  ============================================================================*/
-const widget = new ListWidget();
 
-await setBackground(widget, WIDGET_CONFIGURATIONS);
+/**
+ *
+ */
+(function main() {
+  const doMain = async () => {
+    const widget = new ListWidget();
 
-const events = await getEvents(WIDGET_CONFIGURATIONS);
-console.log(JSON.stringify(events));
+    await setBackground(widget);
 
-drawWidget(widget, events, WIDGET_CONFIGURATIONS);
+    const events = await getEvents();
+    console.log(JSON.stringify(events));
 
-console.log(`args.widgetParameter: ${JSON.stringify(args.widgetParameter)}`);
+    drawWidget(widget, events);
 
-if (config.runsInWidget) {
-  Script.setWidget(widget);
-  Script.complete();
-} else if (args.widgetParameter === 'callback') {
-  const timestamp = (new Date().getTime() - new Date('2001/01/01').getTime()) / 1000;
-  const callback = new CallbackURL(`${WIDGET_CONFIGURATIONS.callbackCalendarApp}:${timestamp}`);
-  callback.open();
-  Script.complete();
-} else {
-  Script.setWidget(widget);
-  widget.presentMedium();
-  Script.complete();
-}
+    console.log(`args.widgetParameter: ${JSON.stringify(args.widgetParameter)}`);
+
+    if (config.runsInWidget) {
+      Script.setWidget(widget);
+      Script.complete();
+    } else if (args.widgetParameter === 'callback') {
+      const timestamp = (new Date().getTime() - new Date('2001/01/01').getTime()) / 1000;
+      const callback = new CallbackURL(`${WIDGET_CONFIGURATIONS.callbackCalendarApp}:${timestamp}`);
+      callback.open();
+      Script.complete();
+    } else {
+      Script.setWidget(widget);
+      widget.presentMedium();
+      Script.complete();
+    }
+  };
+
+  doMain();
+})();
 
 /*=============================================================================
  * DRAW WIDGET
  ============================================================================*/
 
-function drawWidget(widget, events, WIDGET_CONFIGURATIONS) {
+/**
+ * Draw a widget by adding stacks and drawing the left and right stack contents.
+ *
+ * @param {ListWidget} widget - The widget to draw on.
+ * @param {CalendarEventsByHour} events - The calendar events to display.
+ */
+function drawWidget(widget: ListWidget, events: CalendarEventsByHour) {
   const mainStack = widget.addStack();
   mainStack.layoutHorizontally();
   mainStack.spacing = 30;
@@ -154,19 +185,27 @@ function drawWidget(widget, events, WIDGET_CONFIGURATIONS) {
   const rightStack = mainStack.addStack();
   rightStack.layoutVertically();
 
-  drawLeftStack(leftStack, events, WIDGET_CONFIGURATIONS);
-  drawRightStack(rightStack, events, WIDGET_CONFIGURATIONS);
+  drawLeftStack(leftStack, events);
+  drawRightStack(rightStack, events);
 }
 
-function drawLeftStack(stack, events, {
-  font,
-  fontBold,
-  defaultTextSize,
-  largeTextSize,
-  defaultTextColor,
-  defaultSpacer,
-  smallSpacer,
-}) {
+/**
+ * Draws the left stack of the widget with the given stack and events.
+ *
+ * @param {WidgetStack} stack - The stack to draw the left stack on.
+ * @param {CalendarEventsByHour} events - The events to display.
+ */
+function drawLeftStack(stack: WidgetStack, events: CalendarEventsByHour) {
+  const {
+    font,
+    fontBold,
+    defaultTextSize,
+    largeTextSize,
+    defaultTextColor,
+    defaultSpacer,
+    smallSpacer,
+  } = WIDGET_CONFIGURATIONS;
+
   const currentDate = new Date();
 
   const dateStack = stack.addStack();
@@ -197,7 +236,7 @@ function drawLeftStack(stack, events, {
       const eventStack = stack.addStack();
       eventStack.layoutHorizontally();
 
-      const calendarIconText = eventStack.addText("\u2759");
+      const calendarIconText = eventStack.addText('\u2759');
       calendarIconText.textColor = new Color(event.color);
       calendarIconText.font = new Font(font, defaultTextSize);
 
@@ -216,20 +255,28 @@ function drawLeftStack(stack, events, {
   }
 }
 
-function drawRightStack(stack, events, {
-  defaultTextColor,
-  font,
-  largeTextSize,
-  eventsTextColor,
-  numHours,
-  widgetHeight,
-  widgetWidth,
-  padding,
-  eventsLeftPadding,
-  eventsRounding,
-  lineHeight,
-  lineColor,
-}) {
+/**
+ * Draws a right-aligned stack of events on a widget.
+ *
+ * @param {WidgetStack} stack - The widget stack to add the drawn image to.
+ * @param {CalendarEventsByHour} events - An object containing events grouped by hour.
+ */
+function drawRightStack(stack: WidgetStack, events: CalendarEventsByHour) {
+  const {
+    defaultTextColor,
+    font,
+    largeTextSize,
+    eventsTextColor,
+    numHours,
+    widgetHeight,
+    widgetWidth,
+    padding,
+    eventsLeftPadding,
+    eventsRounding,
+    lineHeight,
+    lineColor,
+  } = WIDGET_CONFIGURATIONS;
+
   const halfHourEventHeight = widgetHeight / (numHours * 2);
 
   const draw = new DrawContext();
@@ -242,7 +289,7 @@ function drawRightStack(stack, events, {
   // Loop through all the hours and draw the lines
   for (let i = 0; i < numHours; i++) {
 
-    const currentHourDate = currentDate.addHours(i);
+    const currentHourDate = addHours(currentDate, i);
     const currentHourText = HOUR_FORMAT.format(currentHourDate);
 
     const topPointY = halfHourEventHeight * 2 * i;
@@ -271,11 +318,11 @@ function drawRightStack(stack, events, {
   // Loop through all the hours and draw the events (on top of the lines)
   for (let i = 0; i < numHours; i++) {
 
-    const currentHourDate = currentDate.addHours(i);
+    const currentHourDate =  addHours(currentDate, i);
     const currentHourText = HOUR_FORMAT.format(currentHourDate);
 
     const topPointY = halfHourEventHeight * 2 * i;
-    const midPointY = topPointY + halfHourEventHeight;
+    // const midPointY = topPointY + halfHourEventHeight;
 
     // Draw events for this hour (if any)
     const hourEvents = events[currentHourText];
@@ -285,10 +332,10 @@ function drawRightStack(stack, events, {
         const { startMinute, title, color, duration } = hourEvents[j];
 
         // Determine top Y of event
-        const eventRectY = topPointY + Math.floor((startMinute * halfHourEventHeight) / 30);
+        const eventRectY = topPointY + Math.floor(((startMinute || 0) * halfHourEventHeight) / 30);
 
         // Determine height of events
-        const eventHeight = Math.floor((duration * halfHourEventHeight) / 30);
+        const eventHeight = Math.floor(((duration || 0) * halfHourEventHeight) / 30);
 
         const eventRect = new Rect(
           eventsLeftPadding + padding,
@@ -329,14 +376,24 @@ function drawRightStack(stack, events, {
  * FUNCTIONS
  ============================================================================*/
 
-async function setBackground(widget, { useBackgroundImage, backgroundColor }) {
+/**
+ * Sets the background for the widget.
+ *
+ * @param {WidgetStack} widget - The widget to set the background for.
+ *
+ * @return {Promise<void>} - A promise that resolves when the background is set.
+ */
+async function setBackground(widget: ListWidget): Promise<void> {
+
+  const { useBackgroundImage, backgroundColor } = WIDGET_CONFIGURATIONS;
+
   if (useBackgroundImage) {
     // Determine if our image exists and when it was saved.
     const files = FileManager.local();
     const path = files.joinPath(files.documentsDirectory(), 'calendar-events-widget-background');
     const exists = files.fileExists(path);
 
-    // If it exists and we're running in the widget, use photo from cache
+    // If it exists, and we're running in the widget, use photo from cache
     // Or we're invoking the script to run FROM the widget with a widgetParameter
     if (exists && config.runsInWidget || args.widgetParameter === 'callback') {
       widget.backgroundImage = files.readImage(path);
@@ -362,16 +419,23 @@ async function setBackground(widget, { useBackgroundImage, backgroundColor }) {
   }
 }
 
-async function getEvents({ numHours, calendars }) {
+/**
+ * Retrieves events based on the specified configurations.
+ * @async
+ * @returns {Promise<CalendarEventsByHour>} - A Promise that resolves to an object containing events grouped by hour.
+ */
+async function getEvents() {
+  const { numHours, calendars } = WIDGET_CONFIGURATIONS;
+
   const todayEvents = await CalendarEvent.today([]);
   const tomorrowEvents = await CalendarEvent.tomorrow([]);
   const combinedEvents = todayEvents.concat(tomorrowEvents);
 
   let now = new Date();
-  now = now.addMinutes(now.getMinutes() * -1);
-  const inNumHours = now.addHours(numHours);
+  now = addMinutes(now, now.getMinutes() * -1);
+  const inNumHours = addHours(now, numHours);
 
-  const eventsByHour = {};
+  const eventsByHour: CalendarEventsByHour = {} as CalendarEventsByHour;
 
   combinedEvents.forEach((event) => {
     const start = new Date(event.startDate);
@@ -396,18 +460,18 @@ async function getEvents({ numHours, calendars }) {
           eventsByHour[hourKey] = [];
         }
 
-        let eventDuration = Math.floor(((end - start) / 1000) / 60) - (Math.floor(((now - start) / 1000) / 60));
+        const diff = end.getTime() - start.getTime();
+        const eventDuration = Math.floor((diff / 1000) / 60);
 
-        const eventObj = {
+        eventsByHour[hourKey].push({
           start,
           end,
           startMinute: start.getMinutes(),
           title: event.title,
           color: `#${event.calendar.color.hex}`,
           duration: eventDuration,
-        };
+        });
 
-        eventsByHour[hourKey].push(eventObj);
       } else { // Events that start between now and inNumHours
         const hourKey = HOUR_FORMAT.format(start);
 
@@ -415,18 +479,17 @@ async function getEvents({ numHours, calendars }) {
           eventsByHour[hourKey] = [];
         }
 
-        let eventDuration = Math.floor(((end - start) / 1000) / 60);
+        const diff = end.getTime() - start.getTime();
+        const eventDuration = Math.floor((diff / 1000) / 60);
 
-        const eventObj = {
+        eventsByHour[hourKey].push({
           start,
           end,
           startMinute: start.getMinutes(),
           title: event.title,
           color: `#${event.calendar.color.hex}`,
           duration: eventDuration,
-        };
-
-        eventsByHour[hourKey].push(eventObj);
+        });
       }
     }
   });
