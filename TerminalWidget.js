@@ -52,6 +52,14 @@ Date.prototype.addDays = function(days) {
   return date;
 };
 
+// Create folder to store data
+let files = FileManager.local();
+const iCloudUsed = files.isFileStoredIniCloud(module.filename);
+files = iCloudUsed ? FileManager.iCloud() : files;
+const widgetFolder = "terminalWidget";
+const offlinePath = files.joinPath(files.documentsDirectory(), widgetFolder);
+if (!files.fileExists(offlinePath)) files.createDirectory(offlinePath);
+
 // Import and setup Cache
 const Cache = importModule('Cache');
 const cache = new Cache('terminalWidget');
@@ -63,8 +71,7 @@ const widget = createWidget(data);
 // Set background image of widget, if flag is true
 if (USE_BACKGROUND_IMAGE) {
   // Determine if our image exists and when it was saved.
-  const files = FileManager.iCloud();
-  const path = files.joinPath(files.documentsDirectory(), 'terminal-widget-background');
+  const path = files.joinPath(offlinePath, 'terminal-widget-background');
   const exists = files.fileExists(path);
 
   // If it exists and we're running in the widget, use photo from cache
