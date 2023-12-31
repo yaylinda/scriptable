@@ -32,6 +32,9 @@
     "autofix",
     "import"
   ],
+  "globals": {
+    "ios-scriptable/globals": true
+  },
   "rules": {
     "@typescript-eslint/no-non-null-assertion": "off",
     "@typescript-eslint/ban-ts-comment": "error",

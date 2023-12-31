@@ -1,16 +1,19 @@
 {
   "compilerOptions": {
-    "lib": ["es2016", "dom"],
-    "module": "esnext",
-    "target": "es6",
-    "outDir": ".",
-    "rootDir": "src",
+    "target": "es2015",
+    "lib": ["ES2021", "dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
     "strict": true,
-    "moduleResolution": "node",
+    "forceConsistentCasingInFileNames": true,
     "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
     "isolatedModules": true,
+    "incremental": true,
+    "outDir": "./",
+    "rootDir": "./src",
   },
-  "include": [
-    "src/*.ts"
-  ]
+  "include": ["**/*.ts"],
+  "exclude": ["node_modules"]
 }
