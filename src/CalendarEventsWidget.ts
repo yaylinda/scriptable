@@ -10,6 +10,9 @@
  * Edit these to customize the widget.
  */
 const WIDGET_CONFIGURATIONS = {
+  // The name or identifier for the widget
+  widgetName: 'CalendarEventsWidget',
+
   // Example: 12 PM
   hourFormat: new Intl.DateTimeFormat('en-US', {
     hour: 'numeric',
@@ -40,10 +43,11 @@ const WIDGET_CONFIGURATIONS = {
   //   - x-fantastical3 - Fantastical
   callbackCalendarApp: 'calshow',
 
-  // Whether or not to use a background image for the widget
-  useBackgroundImage: true,
+  // Whether to use a background image for the widget.
+  // If false, the widget will have a gradient background, defined by "backgroundColor".
+  useBackgroundImage: false,
 
-  // If no background, default grayish background color gradient
+  // If not using a background image, the gradient background color.
   backgroundColor: [new Color('#29323c'), new Color('#1c1c1c')],
 
   // Font to use in Widget
@@ -89,16 +93,13 @@ const WIDGET_CONFIGURATIONS = {
   lineHeight: 4,
 
   // Color of hour/half-hour line
-  lineColor: new Color('#ffffff', 0.3),
+  lineColor: new Color(Color.white().hex, 0.3),
 };
 
 /*=============================================================================
  * WIDGET SET UP / PRESENTATION
  ============================================================================*/
 
-/**
- *
- */
 (function main() {
   const doMain = async () => {
     const widget = new ListWidget();
@@ -356,12 +357,12 @@ function drawRightStack(stack: WidgetStack, events: CalendarEventsByHour) {
  */
 async function setBackground(widget: ListWidget): Promise<void> {
 
-  const { useBackgroundImage, backgroundColor } = WIDGET_CONFIGURATIONS;
+  const { useBackgroundImage, backgroundColor, widgetName } = WIDGET_CONFIGURATIONS;
 
   if (useBackgroundImage) {
     // Determine if our image exists and when it was saved.
     const files = FileManager.local();
-    const path = files.joinPath(files.documentsDirectory(), 'calendar-events-widget-background');
+    const path = files.joinPath(files.documentsDirectory(), `${widgetName}-background`);
     const exists = files.fileExists(path);
 
     // If it exists, and we're running in the widget, use photo from cache
@@ -395,7 +396,7 @@ async function setBackground(widget: ListWidget): Promise<void> {
  * @async
  * @returns {Promise<CalendarEventsByHour>} - A Promise that resolves to an object containing events grouped by hour.
  */
-async function getEvents() {
+async function getEvents(): Promise<CalendarEventsByHour> {
   const { hourFormat, numHours, calendars } = WIDGET_CONFIGURATIONS;
 
   const todayEvents = await CalendarEvent.today([]);
