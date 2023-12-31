@@ -99,29 +99,47 @@ This section is only relevant if you're interested in contributing to the source
 If you just want to use one of the Widgets, just create a new Widget from the Scriptable App, and copy and paste the code from the `.js` file 😄.
 
 ### Initial Setup
-On your Mac, open a terminal window and cd into the iCloud Drive folder for the Scriptable app. This directory should already exist if you have downloaded the app on your iPhone.
+#### Find Scriptable App iCloud Drive Directory
+On your Mac, determine the path of the **Scriptable App iCloud Drive Directory** path. This directory should already exist if you have downloaded the app on your iPhone.
+
+You can export this as an env var `SCRIPTABLE_DIR`. 
 ```shell
-# Go into the iCloud Drive folder for the Scriptable app
-cd ~/Library/Mobile Documents/iCloud~dk~simonbs~Scriptable/Documents
+export SCRIPTABLE_DIR='~/Library/Mobile Documents/iCloud~dk~simonbs~Scriptable/Documents'
+```
 
-# Clone this repo into a temporary directory
-git clone https://github.com/yaylinda/scriptable.git temp
+#### Clone Repo and Branch
+```shell
+# Go to whatever directory you keep your projects/code files normally
+cd ~/Developer
 
-# Go into the temporary directory and move all of the contents up one level
-cd temp
-mv * .[^.]* ..
+# Clone this repo
+git clone https://github.com/yaylinda/scriptable.git
 
-# Go back up and delete the temporary directory
-cd ..
-rm -rf temp
+# Create your feature branch
+git checkout -b <FEATURE_BRANCH_NAME>
 
 # Install deps
 npm install
+
+# Now you're ready to code!
 ```
 
-### Updating Widget Logic
-All the source code can be found in the `src` directory of this repo. There is one `.ts` file for each corresponding Widget. We use `tsc` to create the associated `.js` file.
+### Update Source Code
+All the source code can be found in the `src` directory of this repo. There is one `.ts` file for each corresponding Widget. We use `tsc` to generate the associated `.js` file.
 
-The Scriptable App only recognizes `.js` files that are in the root directory as Widgets. However, it's much more pleasant writing code in Typescript, which is why we have this compilation process.
+The Scriptable App only recognizes `.js` files that are in the **Scriptable App iCloud Drive Directory** as Widgets. However, it's much more pleasant writing code in Typescript, which is why we have this compilation process.
 
-If you'd like to contribute to the source code, please make the changes in the TS files, then run `npm run compile` to create the JS files, and make a Pull Request with your updates. Thank you!
+#### Compile and Generate
+Once you've made the desired changes to the TS source code, run `npm run compile`, which does the following:
+1. Compiles the TS, and generates the JS files as output
+2. Copies the updated JS files into the **Scriptable App iCloud Drive Directory** (it will use the value of `SCRIPTABLE_DIR`)
+    - **NOTE:** this will copy ALL of the JS files into your Scriptable App
+
+#### Test the New Widget
+You should see the new JS file in the **Scriptable App iCloud Drive Directory** on your Mac, and the Scriptable App should have the new widget code! 
+
+Run it to verify the desired behavior.
+
+If it looks good, push the changes to your branch and put up a PR. Note that the changes will include the TS source code, and the generated JS files. 
+
+Thank you 🙏!
