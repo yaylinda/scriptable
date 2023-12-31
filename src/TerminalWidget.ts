@@ -51,7 +51,7 @@ const USE_BACKGROUND_IMAGE = false;
  * @param {*} days The number of days to add
  */ 
 Date.prototype.addDays = function(days) {
-  var date = new Date(this.valueOf());
+  let date = new Date(this.valueOf());
   date.setDate(date.getDate() + days);
   return date;
 };
@@ -60,7 +60,7 @@ Date.prototype.addDays = function(days) {
 let files = FileManager.local();
 const iCloudUsed = files.isFileStoredIniCloud(module.filename);
 files = iCloudUsed ? FileManager.iCloud() : files;
-const widgetFolder = "terminalWidget";
+const widgetFolder = 'terminalWidget';
 const offlinePath = files.joinPath(files.documentsDirectory(), widgetFolder);
 if (!files.fileExists(offlinePath)) files.createDirectory(offlinePath);
 
@@ -85,7 +85,7 @@ if (USE_BACKGROUND_IMAGE) {
   // If it's missing when running in the widget, use a gradient black/dark-gray background.
   } else if (!exists && config.runsInWidget) {
     const bgColor = new LinearGradient();
-    bgColor.colors = [new Color("#29323c"), new Color("#1c1c1c")];
+    bgColor.colors = [new Color('#29323c'), new Color('#1c1c1c')];
     bgColor.locations = [0.0, 1.0];
     widget.backgroundGradient = bgColor;
 
@@ -118,10 +118,10 @@ function createWidget(data) {
 
   const widget = new ListWidget();
   if  (!USE_BACKGROUND_IMAGE) {
-  const bgColor = new LinearGradient();
-  bgColor.colors = [new Color(COLORS.bg0), new Color(COLORS.bg1)];
-  bgColor.locations = [0.0, 1.0];
-  widget.backgroundGradient = bgColor;
+    const bgColor = new LinearGradient();
+    bgColor.colors = [new Color(COLORS.bg0), new Color(COLORS.bg1)];
+    bgColor.locations = [0.0, 1.0];
+    widget.backgroundGradient = bgColor;
   }
   widget.setPadding(10, 15, 15, 10);
 
@@ -132,7 +132,7 @@ function createWidget(data) {
 
   // Line 0 - Last Login
   const timeFormatter = new DateFormatter();
-  timeFormatter.locale = "en";
+  timeFormatter.locale = 'en';
   timeFormatter.useNoDateStyle();
   timeFormatter.useShortTimeStyle();
 
@@ -234,7 +234,7 @@ async function fetchWeather() {
   if (!location) {
     location = DEFAULT_LOCATION;
   }
-  const url = "https://api.openweathermap.org/data/2.5/onecall?lat=" + location.latitude + "&lon=" + location.longitude + "&exclude=minutely,hourly,alerts&units=" + TEMP_UNIT + "&lang=en&appid=" + WEATHER_API_KEY;
+  const url = 'https://api.openweathermap.org/data/2.5/onecall?lat=' + location.latitude + '&lon=' + location.longitude + '&exclude=minutely,hourly,alerts&units=' + TEMP_UNIT + '&lang=en&appid=' + WEATHER_API_KEY;
   const address = await Location.reverseGeocode(location.latitude, location.longitude);
   const data = await fetchJson(url);
 
@@ -250,11 +250,11 @@ async function fetchWeather() {
       high: '?',
       low: '?',
       feelsLike: '?',
-    }
+    };
   }
 
   const currentTime = new Date().getTime() / 1000;
-  const isNight = currentTime >= data.current.sunset || currentTime <= data.current.sunrise
+  const isNight = currentTime >= data.current.sunset || currentTime <= data.current.sunrise;
 
   return {
     location: cityState,
@@ -265,7 +265,7 @@ async function fetchWeather() {
     high: Math.round(data.daily[0].temp.max),
     low: Math.round(data.daily[0].temp.min),
     feelsLike: Math.round(data.current.feels_like),
-  }
+  };
 }
 
 /**
@@ -276,37 +276,37 @@ async function fetchWeather() {
  */
 function getWeatherEmoji(code, isNight) {
   if (code >= 200 && code < 300 || code == 960 || code == 961) {
-    return "⛈"
+    return '⛈';
   } else if ((code >= 300 && code < 600) || code == 701) {
-    return "🌧"
+    return '🌧';
   } else if (code >= 600 && code < 700) {
-    return "❄️"
+    return '❄️';
   } else if (code == 711) {
-    return "🔥" 
+    return '🔥'; 
   } else if (code == 800) {
-    return isNight ? "🌕" : "☀️" 
+    return isNight ? '🌕' : '☀️'; 
   } else if (code == 801) {
-    return isNight ? "☁️" : "🌤"  
+    return isNight ? '☁️' : '🌤';  
   } else if (code == 802) {
-    return isNight ? "☁️" : "⛅️"  
+    return isNight ? '☁️' : '⛅️';  
   } else if (code == 803) {
-    return isNight ? "☁️" : "🌥" 
+    return isNight ? '☁️' : '🌥'; 
   } else if (code == 804) {
-    return "☁️"  
+    return '☁️';  
   } else if (code == 900 || code == 962 || code == 781) {
-    return "🌪" 
+    return '🌪'; 
   } else if (code >= 700 && code < 800) {
-    return "🌫" 
+    return '🌫'; 
   } else if (code == 903) {
-    return "🥶"  
+    return '🥶';  
   } else if (code == 904) {
-    return "🥵" 
+    return '🥵'; 
   } else if (code == 905 || code == 957) {
-    return "💨" 
+    return '💨'; 
   } else if (code == 906 || code == 958 || code == 959) {
-    return "🧊" 
+    return '🧊'; 
   } else {
-    return "❓" 
+    return '❓'; 
   }
 }
 

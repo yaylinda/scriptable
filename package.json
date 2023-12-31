@@ -2,9 +2,9 @@
   "name": "scriptable",
   "version": "1.0.0",
   "scripts": {
-    "tsc": "tsc",
-    "lint": "eslint src --ext .ts --fix",
-    "cleanJS": "rm *.js && rm src/*.js",
+    "compile": "tsc && npx eslint . --ext .ts,.js --fix",
+    "lint": "npx eslint . --ext .ts,.js --fix",
+    "cleanJS": "rm *.js",
     "cleanDeps": "rm -rf node_modules && rm package-lock.json"
   },
   "devDependencies": {

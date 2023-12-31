@@ -510,5 +510,5 @@ interface CalendarEventData {
 
 type CalendarEventsByHour = Record<'all-day' | string, CalendarEventData[]>
 
-// Export statement placeholder. This is needed so typescript behaves.
+// This is needed so typescript behaves.
 export {};

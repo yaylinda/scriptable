@@ -5,7 +5,7 @@
  * CONSTANTS
  *======================================================*/
 Date.prototype.addDays = function (days) {
-  var date = new Date(this.valueOf());
+  let date = new Date(this.valueOf());
   date.setDate(date.getDate() + days);
   return date;
 };
@@ -45,20 +45,20 @@ Date.prototype.addMinutes = function (numMinutes) {
 // Example: 12 PM
 const HOUR_FORMAT = new Intl.DateTimeFormat(
   'en-US', {
-  hour: 'numeric',
-});
+    hour: 'numeric',
+  });
 
 // Example: Sat
 const DAY_OF_WEEK_FORMAT = new Intl.DateTimeFormat(
   'en-US', {
-  weekday: 'short',
-});
+    weekday: 'short',
+  });
 
 // Example: 12
 const DAY_OF_MONTH_FORMAT = new Intl.DateTimeFormat(
   'en-US', {
-  day: 'numeric',
-});
+    day: 'numeric',
+  });
 
 /**
  * Widget confugurations. 
@@ -102,8 +102,8 @@ const WIDGET_CONFIGURATIONS = {
   // If no background image, 
   // default to a grayish background color gradient.
   backgroundColor: [
-    new Color("#29323c"),
-    new Color("#1c1c1c")
+    new Color('#29323c'),
+    new Color('#1c1c1c')
   ],
 
   // Font to use in Widget

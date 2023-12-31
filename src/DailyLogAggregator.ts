@@ -61,15 +61,15 @@ const FIELDS_TO_AGGREGATE = [
 
 // Date format for the Alert title. Ex: "Fri, Nov 6"
 const DATE_TEXT_FORMAT = new Intl.DateTimeFormat('en-US', {
-  weekday: 'short', 
-  month: 'short', 
+  weekday: 'short',
+  month: 'short',
   day: 'numeric',
 });
 
 // Date format for the data grid. Showing the DOW as a letter.
 const SHORT_DATE_FORMAT = new Intl.DateTimeFormat('en-US', {
-  weekday: 'narrow', 
-})
+  weekday: 'narrow',
+});
 
 // Maximum number of days to fetch historical data for
 // NOTE: If you increase this, make sure to play around with the font sizes so that the data fits
@@ -106,11 +106,11 @@ const DAILY_LOG_CACHE = new Cache(DAILY_LOG_CACHE_NAME);
 
 /**
  * Convenience function to add days to a Date.
- * 
+ *
  * @param {*} days The number of days to add
  */
 Date.prototype.addDays = function (days) {
-  var date = new Date(this.valueOf());
+  let date = new Date(this.valueOf());
   date.setDate(date.getDate() + days);
   return date;
 };
@@ -127,21 +127,21 @@ if (config.runsInApp) {
   if (response === 0) {
     console.log('Cancel was pressed... doing nothing');
   } else if (response === 1) {
-      console.log('Submit was pressed');
+    console.log('Submit was pressed');
 
-      const updatedFields = [];
-      for (let i = 0; i < FIELDS.length; i++) {
-        const value = alert.textFieldValue(i);
-        updatedFields.push({
-          label: FIELDS[i].label, 
-          category: FIELDS[i].category, 
-          value, 
-        });
-      }
+    const updatedFields = [];
+    for (let i = 0; i < FIELDS.length; i++) {
+      const value = alert.textFieldValue(i);
+      updatedFields.push({
+        label: FIELDS[i].label,
+        category: FIELDS[i].category,
+        value,
+      });
+    }
 
-      DAILY_LOG_CACHE.write(data.dateKey, updatedFields);
-      data.today = updatedFields;
-      data.fields[0] = updatedFields;
+    DAILY_LOG_CACHE.write(data.dateKey, updatedFields);
+    data.today = updatedFields;
+    data.fields[0] = updatedFields;
   }
 }
 
@@ -162,7 +162,7 @@ if (USE_BACKGROUND_IMAGE) {
   // If it's missing when running in the widget, use a gradient black/dark-gray background.
   } else if (!exists && config.runsInWidget) {
     const bgColor = new LinearGradient();
-    bgColor.colors = [new Color("#29323c"), new Color("#1c1c1c")];
+    bgColor.colors = [new Color('#29323c'), new Color('#1c1c1c')];
     bgColor.locations = [0.0, 1.0];
     widget.backgroundGradient = bgColor;
 
@@ -208,7 +208,7 @@ function createWidget(data) {
   // Widget
   const widget = new ListWidget();
   const bgColor = new LinearGradient();
-  bgColor.colors = [new Color("#29323c"), new Color("#1c1c1c")];
+  bgColor.colors = [new Color('#29323c'), new Color('#1c1c1c')];
   bgColor.locations = [0.0, 1.0];
   widget.backgroundGradient = bgColor;
   widget.setPadding(PADDING, PADDING, PADDING, PADDING);
@@ -222,7 +222,7 @@ function createWidget(data) {
   topStack.layoutHorizontally();
 
   // Title stack and text of widget
-  const titleTextLine = topStack.addText(`Daily Logs`);
+  const titleTextLine = topStack.addText('Daily Logs');
   titleTextLine.textColor = Color.white();
   titleTextLine.font = new Font('Menlo-Bold', TITLE_TEXT_SIZE);
   topStack.addSpacer(TITLE_TEXT_SPACING);
@@ -236,8 +236,8 @@ function createWidget(data) {
   addColumnToStack(bottomStack, [{ value: '' }]
     .concat(FIELDS_TO_AGGREGATE
       .map(field => ({
-        value: field.label, 
-        color: CATEGORY_CONFIGURATIONS[field.category].color, 
+        value: field.label,
+        color: CATEGORY_CONFIGURATIONS[field.category].color,
       }))));
 
   bottomStack.addSpacer(VERTICAL_TEXT_SPACING);
@@ -251,7 +251,7 @@ function createWidget(data) {
 
   let date = parseDateFromKey(data.dateKey);
   date = date.addDays(-1 * (dataByDay.length - 1));
-  
+
   // One column per day
   dataByDay.forEach(dayData => {
     const columnData = [];
@@ -262,7 +262,7 @@ function createWidget(data) {
       isBold: true,
       align: 'center',
     });
-    
+
     // One cell per field data
     FIELDS_TO_AGGREGATE.forEach(field => {
       const fieldFromDay = dayData.find(d => d.label === field.label);
@@ -273,12 +273,12 @@ function createWidget(data) {
         columnData.push({ value: '?'});
       }
     });
-    
+
     addColumnToStack(bottomStack, columnData);
     bottomStack.addSpacer(VERTICAL_DATA_GRID_SPACING);
     date = date.addDays(1);
   });
-  
+
   // Vertical spacing between data grid column and completion percentage
   bottomStack.addSpacer(VERTICAL_TEXT_SPACING);
 
@@ -297,7 +297,7 @@ function createWidget(data) {
     }
 
     completionData.push({
-      value: `[${completionRate}%]`, 
+      value: `[${completionRate}%]`,
       align: 'right',
       color: completionCount === data.fields.length ? '#66ff00' : '#ffffff',
     });
@@ -418,3 +418,6 @@ function parseDateFromKey(dateKey) {
     parseInt(dateParts[2]), // day of month
   );
 }
+
+// This is needed so typescript behaves.
+export {};

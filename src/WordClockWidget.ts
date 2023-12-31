@@ -16,8 +16,8 @@ const WIDGET_CONFIGURATIONS = {
   // color gradient will be use. Feel free to set to your
   // own colors
   backgroundColor: [
-    new Color("#29323c"), 
-    new Color("#1c1c1c")
+    new Color('#29323c'), 
+    new Color('#1c1c1c')
   ],
 
   // The font to use for the words in the word clock
@@ -49,7 +49,7 @@ const WIDGET_CONFIGURATIONS = {
   // The spacing between each individual word, within the
   // same line
   spacingBetweenWords: 8,
-}
+};
 
 /*=========================================================
  * WIDGET SET UP / PRESENTATION
@@ -170,7 +170,7 @@ function getHighlightedWords() {
     hour = hour + 1;
   }
 
- if (minute >= 5 && minute < 10) {
+  if (minute >= 5 && minute < 10) {
     // highlight "five"
     defaultHighlights[2][0] = true;
     // highlight "minutes"
@@ -270,9 +270,9 @@ function getHighlightedWords() {
  * If running in the app, prompt the user to select a 
  * background image. Persist in cache.
  */ 
- async function setBackground(widget, { 
-   useBackgroundImage, 
-   backgroundColor,
+async function setBackground(widget, { 
+  useBackgroundImage, 
+  backgroundColor,
 }) {
   if (useBackgroundImage) {
     // Determine if our image exists and when it was saved.

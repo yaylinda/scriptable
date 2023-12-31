@@ -76,7 +76,7 @@ const USE_BACKGROUND_IMAGE = false;
  * @param {*} days The number of days to add
  */
 Date.prototype.addDays = function (days) {
-  var date = new Date(this.valueOf());
+  let date = new Date(this.valueOf());
   date.setDate(date.getDate() + days);
   return date;
 };
@@ -131,7 +131,7 @@ if (USE_BACKGROUND_IMAGE) {
   // If it's missing when running in the widget, use a gray background.
   } else if (!exists && config.runsInWidget) {
     const bgColor = new LinearGradient();
-    bgColor.colors = [new Color("#29323c"), new Color("#1c1c1c")];
+    bgColor.colors = [new Color('#29323c'), new Color('#1c1c1c')];
     bgColor.locations = [0.0, 1.0];
     widget.backgroundGradient = bgColor;
 
@@ -177,7 +177,7 @@ function createWidget(data) {
   // Widget
   const widget = new ListWidget();
   const bgColor = new LinearGradient();
-  bgColor.colors = [new Color("#29323c"), new Color("#1c1c1c")];
+  bgColor.colors = [new Color('#29323c'), new Color('#1c1c1c')];
   bgColor.locations = [0.0, 1.0];
   widget.backgroundGradient = bgColor;
   widget.setPadding(10, 10, 10, 10);
@@ -271,7 +271,7 @@ async function fetchData() {
     dateText,
     dateKey,
     fields,
-  }
+  };
 }
 
 function initializeFields() {
