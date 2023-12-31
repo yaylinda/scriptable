@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "es2015",
-    "lib": ["ES2021", "dom", "dom.iterable", "esnext"],
+    "lib": ["es2016", "dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -11,9 +11,8 @@
     "moduleResolution": "node",
     "isolatedModules": true,
     "incremental": true,
-    "outDir": "./",
     "rootDir": "./src",
   },
-  "include": ["**/*.ts"],
+  "include": ["./src/*.ts"],
   "exclude": ["node_modules"]
 }
