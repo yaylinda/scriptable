@@ -1,13 +1,17 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: light-brown; icon-glyph: magic;
-/*=========================================================
- * WIDGET CONFIGURATIONS
- ========================================================*/
 
+/*=============================================================================
+ * WIDGET CONFIGURATIONS *** CONFIGURE ME!!! ***
+ ============================================================================*/
+
+/**
+ * Edit these to customize the widget.
+ */
 const WIDGET_CONFIGURATIONS = {
 
-  // If this is true, it opens a prompt to select a 
+  // If this is true, it opens a prompt to select a
   // background image from the photo gallery,
   // when the widget is run from the Scriptable app
   useBackgroundImage: true,
@@ -16,7 +20,7 @@ const WIDGET_CONFIGURATIONS = {
   // color gradient will be use. Feel free to set to your
   // own colors
   backgroundColor: [
-    new Color('#29323c'), 
+    new Color('#29323c'),
     new Color('#1c1c1c')
   ],
 
@@ -39,13 +43,13 @@ const WIDGET_CONFIGURATIONS = {
   // The color of the words that are NOT highlighted
   textColorBackground: Color.lightGray(),
 
-  // The opacity of the non-highlighted words 
+  // The opacity of the non-highlighted words
   // 1 -> opaque; 0 -> transparent
   textAlphaBackground: 0.5,
 
   // The spacing between the lines of words of the clock
   spacingBetweenLines: 4,
-  
+
   // The spacing between each individual word, within the
   // same line
   spacingBetweenWords: 8,
@@ -59,7 +63,7 @@ const WIDGET_CONFIGURATIONS = {
  * The words to display for the clock. If you want to use
  * other words, make sure to update getHighlightedWords()
  * accordingly.
- */ 
+ */
 const TIME_WORDS_MATRIX = [
   ['IT', 'IS', 'HALF', 'TEN'],
   ['QUARTER', 'TWENTY'],
@@ -92,11 +96,11 @@ if (config.runsInWidget) {
 
 /**
  * Main widget rendering function.
- * 
- * Lays out the widget as a vertical list of stacks, 
+ *
+ * Lays out the widget as a vertical list of stacks,
  * containing texts.
- */ 
-function drawWidget(widget, { 
+ */
+function drawWidget(widget, {
   font,
   fontSize,
   textColorHighlighted,
@@ -115,7 +119,7 @@ function drawWidget(widget, {
 
   for (let i = 0; i < TIME_WORDS_MATRIX.length; i++) {
     const numWords = TIME_WORDS_MATRIX[i].length;
-    
+
     const textStack = mainStack.addStack();
     textStack.layoutHorizontally();
     textStack.spacing = spacingBetweenWords;
@@ -138,8 +142,8 @@ function drawWidget(widget, {
 /**
  * Based on the input time, returns an array of arrays of
  * which "time" words should be highlighted.
- * 
- * This is used as a look-up when adding texts to the 
+ *
+ * This is used as a look-up when adding texts to the
  * stack.
  */
 function getHighlightedWords() {
@@ -224,7 +228,7 @@ function getHighlightedWords() {
     // highlight "minutes"
     defaultHighlights[2][1] = true;
   }
-  
+
   if (hour > 12) {
     hour = hour - 12;
   }
@@ -253,45 +257,45 @@ function getHighlightedWords() {
     defaultHighlights[6][2] = true;
   } else if (hour === 12) {
     defaultHighlights[7][0] = true;
-  } 
+  }
 
   return defaultHighlights;
 }
 
 /**
  * Sets the background on the widget.
- * 
- * If the script/widget is running as a widget, 
- * set the background from the cache. 
- * 
+ *
+ * If the script/widget is running as a widget,
+ * set the background from the cache.
+ *
  * If no background image is in the cache,
  * default to the gray gradient.
- * 
- * If running in the app, prompt the user to select a 
+ *
+ * If running in the app, prompt the user to select a
  * background image. Persist in cache.
- */ 
-async function setBackground(widget, { 
-  useBackgroundImage, 
+ */
+async function setBackground(widget, {
+  useBackgroundImage,
   backgroundColor,
 }) {
   if (useBackgroundImage) {
     // Determine if our image exists and when it was saved.
     const files = FileManager.local();
     const path = files.joinPath(
-      files.documentsDirectory(), 
+      files.documentsDirectory(),
       'word-clock-widget-background'
     );
     const exists = files.fileExists(path);
 
-    // If it exists and we're running in the widget, 
+    // If it exists and we're running in the widget,
     // use photo from cache
-    // Or we're invoking the script to run FROM the widget 
+    // Or we're invoking the script to run FROM the widget
     // with a widgetParameter
-    if (exists && config.runsInWidget 
+    if (exists && config.runsInWidget
         || args.widgetParameter === 'callback') {
       widget.backgroundImage = files.readImage(path);
 
-      // If it's missing when running in the widget, 
+      // If it's missing when running in the widget,
       // fallback to backgroundColor
     } else if (!exists && config.runsInWidget) {
       const bgColor = new LinearGradient();
@@ -299,7 +303,7 @@ async function setBackground(widget, {
       bgColor.locations = [0.0, 1.0];
       widget.backgroundGradient = bgColor;
 
-      // But if we're running in app, prompt the user for 
+      // But if we're running in app, prompt the user for
       // the image.
     } else if (config.runsInApp) {
       const img = await Photos.fromLibrary();
@@ -313,3 +317,6 @@ async function setBackground(widget, {
     widget.backgroundGradient = bgColor;
   }
 }
+
+// This is needed so typescript behaves.
+export {};
