@@ -307,7 +307,7 @@ function createWidget(data: DayFieldsWithValue[]) {
       value : `${shortDateFormat.format(date)}`,
       isBold: true,
       align : 'center',
-    } as DateLabelCell);
+    });
 
     // One cell per field data
     fieldsToAggregate.forEach(field => {
@@ -328,7 +328,7 @@ function createWidget(data: DayFieldsWithValue[]) {
   bottomStack.addSpacer(verticalTextSpacing);
 
   // Column of percentage for each field
-  const completionData = [{ value: ' ' }];
+  const completionData: Cell[] = [{ value: ' ' }];
 
   fieldsToAggregate.forEach(field => {
     const completionCount = fieldCompletionCounts[field.label];
@@ -347,7 +347,7 @@ function createWidget(data: DayFieldsWithValue[]) {
       value: `[${completionRate}%]`,
       align: 'right',
       color: completionCount === data.length ? '#66ff00' : '#ffffff',
-    } as FieldCompletionCell);
+    });
   });
 
   addColumnToStack(bottomStack, completionData);
@@ -355,23 +355,49 @@ function createWidget(data: DayFieldsWithValue[]) {
   return widget;
 }
 
-function addColumnToStack(stack, columnData) {
+/**
+ * Adds a column to a widget stack.
+ *
+ * @param {WidgetStack} stack - The widget stack to add the column to.
+ * @param {Cell[]} columnData - The data of the cells in the column.
+ * @return {void}
+ */
+function addColumnToStack(stack: WidgetStack, columnData: Cell[]): void {
   // console.log(`columnData: ${JSON.stringify(columnData)}`);
+
+  const {verticalTextSpacing} = WIDGET_CONFIGURATIONS;
 
   const column = stack.addStack();
   column.layoutVertically();
-  column.spacing = VERTICAL_TEXT_SPACING;
+  column.spacing = verticalTextSpacing;
   columnData.forEach(cd => addCellToColumn(column, cd));
 }
 
-function addCellToColumn(column, data) {
+/**
+ * Adds a cell to the given column.
+ *
+ * @param {WidgetStack} column - The column to add the cell to.
+ * @param {Cell} data - The data to be added to the cell.
+ *
+ * @return {void}
+ */
+function addCellToColumn(column: WidgetStack, data: Cell): void {
   const cell = column.addStack();
   cell.layoutVertically();
   addTextToStack(cell, data);
 }
 
-function addTextToStack(stack, data) {
-  console.log(`addTextToStack, data: ${JSON.stringify(data)}`);
+/**
+ * Adds text to the given stack with the specified configurations.
+ *
+ * @param {WidgetStack} stack - The stack to add the text to.
+ * @param {Cell} data - The data object containing the text and its configurations.
+ */
+function addTextToStack(stack: WidgetStack, data: Cell) {
+  // console.log(`addTextToStack, data: ${JSON.stringify(data)}`);
+
+  const {font, fontBold, textSize} = WIDGET_CONFIGURATIONS;
+
   const {
     value,
     color,
@@ -381,7 +407,7 @@ function addTextToStack(stack, data) {
 
   const textLine = stack.addText(value);
 
-  textLine.font = new Font(`Menlo${isBold ? '-Bold' : ''}`, TEXT_SIZE);
+  textLine.font = new Font(isBold ? fontBold : font, textSize);
 
   if (color) {
     textLine.textColor = new Color(color);
@@ -399,6 +425,7 @@ function addTextToStack(stack, data) {
 /*=============================================================================
  * FETCH DATA
  ============================================================================*/
+
 /**
  * Fetches data for a specified number of days.
  *
@@ -582,16 +609,9 @@ interface DayFieldsWithValue {
 
 interface Cell {
   value: string,
-}
-
-interface DateLabelCell extends Cell {
-  isBold: boolean,
-  align: 'center',
-}
-
-interface FieldCompletionCell extends Cell {
-  color: string,
-  align: 'right',
+  align?: 'center' | 'right',
+  isBold?: boolean,
+  color?: string,
 }
 
 // This is needed so typescript behaves.
