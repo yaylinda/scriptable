@@ -18,6 +18,6 @@
     "eslint-plugin-autofix": "^1.1.0",
     "eslint-plugin-ios-scriptable": "^0.1.0",
     "eslint-plugin-prettier": "^5.1.2",
-    "typescript": "^4.7.4"
+    "typescript": "^5.3.3"
   }
 }
