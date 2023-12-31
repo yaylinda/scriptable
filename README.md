@@ -1,7 +1,9 @@
 # scriptable
-Playing around with various scripts for the Scriptable app on iOS.
+My collection of various Scriptable Widgets and utilities for the [Scriptable iOS App](https://scriptable.app/)! 
 
 To use one of the Widgets, just create a new Widget from the Scriptable App, and copy and paste the code from the `.js` file 😄.
+
+If you'd like to contribute to the code, see [Local Development](https://github.com/yaylinda/scriptable#LocalDevelopment).
 
 ## Widgets List
 - [DiscordWidget](https://github.com/yaylinda/scriptable#DiscordWidget)
