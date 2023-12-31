@@ -3,66 +3,34 @@
 // icon-color: orange; icon-glyph: magic;
 
 /*=============================================================================
- * Types
- ============================================================================*/
-interface CalendarEventData {
-  start?: Date,
-  end?: Date,
-  startMinute?: number,
-  title: string,
-  color: string,
-  duration?: number,
-}
-
-type CalendarEventsByHour = Record<'all-day' | string, CalendarEventData[]>
-
-
-/*=============================================================================
- * CONSTANTS
- ============================================================================*/
-
-const addHours = (input: Date, numHours: number) => {
-  const date = new Date(input.valueOf());
-  date.setHours(date.getHours() + numHours);
-  return date;
-};
-
-const addMinutes = (input: Date, numMinutes: number) => {
-  const date = new Date(input);
-  date.setMinutes(date.getMinutes() + numMinutes);
-  return date;
-};
-
-/*=============================================================================
  * WIDGET CONFIGURATIONS *** CONFIGURE ME!!! ***
  ============================================================================*/
 
-// Example: 12 PM
-const HOUR_FORMAT = new Intl.DateTimeFormat('en-US', {
-  hour: 'numeric',
-});
-
-// Example: Saturday
-const DAY_OF_WEEK_FORMAT = new Intl.DateTimeFormat('en-US', {
-  weekday: 'long',
-});
-
-// Example: 12
-const DAY_OF_MONTH_FORMAT = new Intl.DateTimeFormat('en-US', {
-  day: 'numeric',
-});
-
-
 /**
- * Widget confugurations. Edit these to customize the widget.
+ * Edit these to customize the widget.
  */
 const WIDGET_CONFIGURATIONS = {
+  // Example: 12 PM
+  hourFormat: new Intl.DateTimeFormat('en-US', {
+    hour: 'numeric',
+  }),
+
+  // Example: Saturday
+  dayOfWeekFormat: new Intl.DateTimeFormat('en-US', {
+    weekday: 'long',
+  }),
+
+  // Example: 12
+  dayOfMonthFormat: new Intl.DateTimeFormat('en-US', {
+    day: 'numeric',
+  }),
+
   // Number of hours to show in the agenda
   numHours: 6,
 
   // Calendars to show events from. Empty array means all calendars.
   // Calendar names can be found in the "Calendar" App. The name must be an exact string match.
-  calendars: [],
+  calendars: [] as string[],
 
   // Calendar callback app
   // When clicking on the widget, which calendar app should open?
@@ -197,6 +165,8 @@ function drawWidget(widget: ListWidget, events: CalendarEventsByHour) {
  */
 function drawLeftStack(stack: WidgetStack, events: CalendarEventsByHour) {
   const {
+    dayOfWeekFormat,
+    dayOfMonthFormat,
     font,
     fontBold,
     defaultTextSize,
@@ -211,13 +181,13 @@ function drawLeftStack(stack: WidgetStack, events: CalendarEventsByHour) {
   const dateStack = stack.addStack();
   dateStack.layoutHorizontally();
 
-  const dowText = dateStack.addText(DAY_OF_WEEK_FORMAT.format(currentDate).toUpperCase());
+  const dowText = dateStack.addText(dayOfWeekFormat.format(currentDate).toUpperCase());
   dowText.textColor = defaultTextColor;
   dowText.font = new Font(font, largeTextSize);
 
   dateStack.addSpacer(smallSpacer);
 
-  const domText = dateStack.addText(DAY_OF_MONTH_FORMAT.format(currentDate));
+  const domText = dateStack.addText(dayOfMonthFormat.format(currentDate));
   domText.textColor = defaultTextColor;
   domText.font = new Font(fontBold, largeTextSize);
 
@@ -263,6 +233,7 @@ function drawLeftStack(stack: WidgetStack, events: CalendarEventsByHour) {
  */
 function drawRightStack(stack: WidgetStack, events: CalendarEventsByHour) {
   const {
+    hourFormat,
     defaultTextColor,
     font,
     largeTextSize,
@@ -290,7 +261,7 @@ function drawRightStack(stack: WidgetStack, events: CalendarEventsByHour) {
   for (let i = 0; i < numHours; i++) {
 
     const currentHourDate = addHours(currentDate, i);
-    const currentHourText = HOUR_FORMAT.format(currentHourDate);
+    const currentHourText = hourFormat.format(currentHourDate);
 
     const topPointY = halfHourEventHeight * 2 * i;
     const midPointY = topPointY + halfHourEventHeight;
@@ -319,7 +290,7 @@ function drawRightStack(stack: WidgetStack, events: CalendarEventsByHour) {
   for (let i = 0; i < numHours; i++) {
 
     const currentHourDate =  addHours(currentDate, i);
-    const currentHourText = HOUR_FORMAT.format(currentHourDate);
+    const currentHourText = hourFormat.format(currentHourDate);
 
     const topPointY = halfHourEventHeight * 2 * i;
     // const midPointY = topPointY + halfHourEventHeight;
@@ -373,7 +344,7 @@ function drawRightStack(stack: WidgetStack, events: CalendarEventsByHour) {
 }
 
 /*=============================================================================
- * FUNCTIONS
+ * HELPER FUNCTIONS
  ============================================================================*/
 
 /**
@@ -425,7 +396,7 @@ async function setBackground(widget: ListWidget): Promise<void> {
  * @returns {Promise<CalendarEventsByHour>} - A Promise that resolves to an object containing events grouped by hour.
  */
 async function getEvents() {
-  const { numHours, calendars } = WIDGET_CONFIGURATIONS;
+  const { hourFormat, numHours, calendars } = WIDGET_CONFIGURATIONS;
 
   const todayEvents = await CalendarEvent.today([]);
   const tomorrowEvents = await CalendarEvent.tomorrow([]);
@@ -453,8 +424,9 @@ async function getEvents() {
           title: event.title,
           color: `#${event.calendar.color.hex}`,
         });
-      } else if (start < now && end > now) { // Events that started before the current hour, but have not yet ended
-        const hourKey = HOUR_FORMAT.format(now);
+      } else if (start < now && end > now) {
+        // Events that started before the current hour, but have not yet ended
+        const hourKey = hourFormat.format(now);
 
         if (!eventsByHour[hourKey]) {
           eventsByHour[hourKey] = [];
@@ -473,7 +445,7 @@ async function getEvents() {
         });
 
       } else { // Events that start between now and inNumHours
-        const hourKey = HOUR_FORMAT.format(start);
+        const hourKey = hourFormat.format(start);
 
         if (!eventsByHour[hourKey]) {
           eventsByHour[hourKey] = [];
@@ -496,3 +468,47 @@ async function getEvents() {
 
   return eventsByHour;
 }
+
+/**
+ * Adds a specified number of hours to a given date.
+ *
+ * @param {Date} input - The original date to be modified.
+ * @param {number} numHours - The number of hours to add to the date.
+ * @returns {Date} - The updated date with the added hours.
+ */
+const addHours = (input: Date, numHours: number): Date => {
+  const date = new Date(input.valueOf());
+  date.setHours(date.getHours() + numHours);
+  return date;
+};
+
+/**
+ * Adds the specified number of minutes to a given date.
+ *
+ * @param {Date} input - The date to add minutes to.
+ * @param {number} numMinutes - The number of minutes to add.
+ * @returns {Date} - The resulting date after adding the specified minutes.
+ */
+const addMinutes = (input: Date, numMinutes: number): Date => {
+  const date = new Date(input);
+  date.setMinutes(date.getMinutes() + numMinutes);
+  return date;
+};
+
+/*=============================================================================
+ * TYPES
+ ============================================================================*/
+
+interface CalendarEventData {
+  start?: Date,
+  end?: Date,
+  startMinute?: number,
+  title: string,
+  color: string,
+  duration?: number,
+}
+
+type CalendarEventsByHour = Record<'all-day' | string, CalendarEventData[]>
+
+// Export statement placeholder. This is needed so typescript behaves.
+export {};
