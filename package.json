@@ -4,7 +4,7 @@
   "scripts": {
     "tsc": "tsc",
     "lint": "eslint src --ext .ts --fix",
-    "cleanJS": "rm *.js",
+    "cleanJS": "rm *.js && rm src/*.js",
     "cleanDeps": "rm -rf node_modules && rm package-lock.json"
   },
   "devDependencies": {

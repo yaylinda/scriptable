@@ -13,6 +13,7 @@
     "incremental": true,
     "baseUrl": "./src",
     "rootDir": "./src",
+    "outDir": ".",
   },
   "include": ["./src/*.ts"],
   "exclude": ["node_modules"]
