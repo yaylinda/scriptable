@@ -2,8 +2,10 @@
   "name": "scriptable",
   "version": "1.0.0",
   "scripts": {
-    "compile": "tsc && npx eslint . --ext .ts,.js --fix",
-    "lint": "npx eslint . --ext .ts,.js --fix",
+    "build": "tsc",
+    "lintTS": "eslint src --ext .ts --fix",
+    "lintJS": "eslint . --ext .js --fix",
+    "compile": "npm run build && npm run lintTS && npm run lintJS",
     "cleanJS": "rm *.js",
     "cleanDeps": "rm -rf node_modules && rm package-lock.json"
   },
